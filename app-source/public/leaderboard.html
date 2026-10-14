@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A1E57">
+<title>Challenge Leaderboard — Statewide Synergy</title>
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<style>
+  @font-face { font-family: 'Archivo'; font-weight: 700; font-display: swap; src: url('/fonts/archivo-latin-700-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Archivo'; font-weight: 600; font-display: swap; src: url('/fonts/archivo-latin-600-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Source Sans 3'; font-weight: 400; font-display: swap; src: url('/fonts/source-sans-3-latin-400-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Source Sans 3'; font-weight: 600; font-display: swap; src: url('/fonts/source-sans-3-latin-600-normal.woff2') format('woff2'); }
+  :root {
+    --navy: #11308A; --navy-deep: #0A1E57; --navy-mid: #2A4CA8;
+    --gold: #FBDB73; --gold-mid: #E3B534; --white: #FFFFFF; --muted: #C9D3EE;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: radial-gradient(1200px 600px at 85% -10%, #1C3F9E 0%, transparent 60%), var(--navy-deep);
+    color: var(--white);
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-size: clamp(16px, 1.4vw, 26px);
+    padding: clamp(16px, 3vw, 48px);
+  }
+  header { display: flex; align-items: center; gap: clamp(14px, 2vw, 32px); flex-wrap: wrap; border-bottom: 4px solid var(--gold); padding-bottom: clamp(12px, 1.6vw, 24px); }
+  header img { height: clamp(48px, 6vw, 96px); width: auto; }
+  .titles { flex: 1 1 320px; min-width: 0; }
+  .eyebrow { margin: 0; color: var(--gold); font-family: 'Archivo', sans-serif; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: .8em; }
+  h1 { margin: 2px 0 0; font-family: 'Archivo', sans-serif; font-weight: 700; font-size: clamp(26px, 3.4vw, 64px); line-height: 1.05; }
+  .status { text-align: right; flex: 0 1 auto; }
+  .clock { font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 1.4em; color: var(--gold); }
+  .sub { color: var(--muted); font-size: .85em; }
+  .stats { display: flex; gap: clamp(16px, 3vw, 56px); margin: clamp(14px, 2vw, 28px) 0; flex-wrap: wrap; }
+  .stat b { display: block; font-family: 'Archivo', sans-serif; font-size: 2em; line-height: 1; color: var(--gold); }
+  .stat span { color: var(--muted); }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(8px, 1vw, 14px); grid-template-columns: 1fr; }
+  @media (min-width: 1100px) { ol { grid-template-columns: 1fr 1fr; grid-auto-flow: column; grid-template-rows: repeat(5, auto); } }
+  li {
+    display: grid; grid-template-columns: 2.4em 1fr auto; align-items: center; gap: .8em;
+    padding: .55em .9em .55em .55em; border-radius: 14px;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+    transition: background .6s;
+  }
+  li.flash { background: rgba(251,219,115,.28); }
+  .rk { display: grid; place-items: center; width: 2.1em; height: 2.1em; border-radius: 50%; background: var(--navy-mid); font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 1.1em; }
+  li.r1 .rk { background: var(--gold); color: var(--navy-deep); }
+  li.r2 .rk { background: #E7EAEF; color: var(--navy-deep); }
+  li.r3 .rk { background: #E9C3A0; color: var(--navy-deep); }
+  .who { min-width: 0; }
+  .who b { display: block; font-family: 'Archivo', sans-serif; font-weight: 600; font-size: 1.25em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .who span { color: var(--muted); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tix { text-align: right; color: var(--muted); font-size: .85em; }
+  .tix b { display: block; font-family: 'Archivo', sans-serif; font-size: 1.9em; line-height: 1; color: var(--white); }
+  .empty { padding: 1.4em; border-radius: 14px; background: rgba(255,255,255,.07); font-size: 1.3em; }
+  footer { margin-top: clamp(16px, 2vw, 28px); color: var(--muted); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: .85em; }
+  footer b { color: var(--white); }
+  #test { color: var(--gold); font-weight: 600; }
+  @media (prefers-reduced-motion: reduce) { li { transition: none; } }
+
+  /* Winner reveal */
+  .reveal { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; text-align: center;
+            background: radial-gradient(900px 600px at 50% 40%, #1C3F9E 0%, var(--navy-deep) 70%); padding: 4vw; overflow: hidden; }
+  .reveal[hidden] { display: none; }
+  .reveal .eyebrow { font-size: clamp(18px, 2vw, 34px); }
+  .reveal .roll { font-family: 'Archivo', sans-serif; font-weight: 700; font-size: clamp(40px, 7vw, 140px); line-height: 1.05; margin: .3em 0 .15em; min-height: 1.1em; }
+  .reveal .roll.final { color: var(--gold); animation: pop .6s ease-out; }
+  .reveal .org { font-size: clamp(20px, 2.6vw, 48px); color: var(--muted); }
+  .reveal .rtix { text-align: center; font-size: clamp(16px, 1.8vw, 30px); color: var(--muted); margin-top: .6em; }
+  .reveal .testtag[hidden] { display: none; }
+  .reveal .testtag { display: inline-block; margin-top: 1em; padding: .2em .8em; border-radius: 999px; background: rgba(255,255,255,.12); font-size: clamp(14px, 1.3vw, 22px); }
+  .reveal .close { position: absolute; top: 16px; right: 16px; background: transparent; color: var(--muted); border: 1px solid rgba(255,255,255,.3); border-radius: 10px; padding: 8px 14px; font: inherit; font-size: 16px; cursor: pointer; }
+  @keyframes pop { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.06); opacity: 1; } 100% { transform: scale(1); } }
+  .confetti { position: absolute; top: -5vh; width: 12px; height: 18px; border-radius: 2px; opacity: .9; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(115vh) rotate(720deg); } }
+  @media (prefers-reduced-motion: reduce) { .reveal .roll.final { animation: none; } .confetti { display: none; } }
+
+  /* Staff controls: only with ?staff in the address */
+  .staff { position: fixed; right: 16px; bottom: 16px; z-index: 20; width: min(360px, calc(100vw - 32px)); background: #fff; color: #1B2333;
+           border-radius: 14px; padding: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.35); font-size: 16px; }
+  .staff[hidden] { display: none; }
+  .staff h2 { margin: 0 0 8px; font: 700 17px 'Archivo', sans-serif; color: var(--navy); }
+  .staff label { display: block; font-weight: 600; margin-bottom: 4px; }
+  .staff input { width: 100%; min-height: 44px; padding: 8px 10px; font: inherit; border: 1px solid #4A5468; border-radius: 10px; }
+  .staff .btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .staff button { min-height: 44px; padding: 8px 14px; font: 600 16px 'Source Sans 3', sans-serif; border-radius: 10px; border: 1px solid var(--navy); background: #fff; color: var(--navy); cursor: pointer; }
+  .staff button.go { background: var(--gold); border-color: var(--gold-mid); color: var(--navy-deep); }
+  .staff button:disabled { opacity: .55; cursor: default; }
+  .staff .note { margin: 8px 0 0; font-size: 14px; color: #4A5468; }
+  .staff .note.bad { color: #93360F; }
+  .staff-toggle { position: fixed; right: 16px; bottom: 16px; z-index: 20; }
+</style>
+</head>
+<body>
+<header>
+  <img src="/assets/wvarf-logo-reverse.png" alt="WVARF">
+  <div class="titles">
+    <p class="eyebrow">Statewide Synergy · Live leaderboard</p>
+    <h1>Synergy Connections Challenge</h1>
+  </div>
+  <div class="status">
+    <div class="clock" id="window">&nbsp;</div>
+    <div class="sub" id="updated">Connecting…</div>
+  </div>
+</header>
+
+<div class="stats" aria-live="polite">
+  <div class="stat"><b id="players">–</b><span>players</span></div>
+  <div class="stat"><b id="tickets">–</b><span>tickets in the drawing</span></div>
+</div>
+
+<main id="board"><p class="empty">Loading the leaderboard…</p></main>
+
+<footer>
+  <span>Play in the conference app: open the <b>Challenge</b>, fill squares, and tap <b>Turn in my card</b>.</span>
+  <span id="test" hidden>Test mode · clears automatically on Oct 22</span>
+  <span id="site"></span>
+</footer>
+
+
+<section class="reveal" id="reveal" hidden aria-live="assertive">
+  <button type="button" class="close" id="revealClose">Back to leaderboard</button>
+  <div>
+    <p class="eyebrow">Synergy Connections Challenge · Gift basket winner</p>
+    <div class="roll" id="rollName"></div>
+    <div class="org" id="rollOrg"></div>
+    <div class="rtix" id="rollTix"></div>
+    <div class="testtag" id="rollTest" hidden>Test drawing</div>
+  </div>
+</section>
+
+<aside class="staff" id="staff" hidden aria-label="Staff drawing controls">
+  <h2>Staff: gift basket drawing</h2>
+  <form id="staffLogin">
+    <label for="staffKey">Staff key</label>
+    <input id="staffKey" type="password" autocomplete="current-password" required>
+    <div class="btns"><button type="submit" class="go">Unlock</button></div>
+  </form>
+  <div id="staffTools" hidden>
+    <div class="btns">
+      <button type="button" class="go" id="drawBtn">Draw winner</button>
+      <button type="button" id="againBtn">Draw again</button>
+      <button type="button" id="clearBtn">Clear winner</button>
+      <button type="button" id="hideBtn">Hide</button>
+    </div>
+    <p class="note">Each ticket is one chance. “Draw again” skips anyone already drawn (if the winner isn’t here). The winner shows on every leaderboard screen.</p>
+  </div>
+  <p class="note" id="staffMsg" aria-live="polite"></p>
+</aside>
+<button type="button" class="staff staff-toggle" id="staffShow" hidden style="width:auto;padding:8px 14px">Staff</button>
+
+<script>
+(() => {
+  const OPENS = Date.parse('2026-10-22T11:30:00-04:00');
+  const CLOSES = Date.parse('2026-10-22T12:40:00-04:00');
+  const POLL_MS = 10000;
+  const prev = new Map();
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  $('site').textContent = location.host;
+
+  function windowText() {
+    const now = Date.now();
+    if (now < OPENS) return 'Opens Thursday 11:30 AM';
+    if (now < CLOSES) {
+      const m = Math.ceil((CLOSES - now) / 60000);
+      return m <= 1 ? 'Cards close in under a minute' : `Cards close in ${m} min`;
+    }
+    return 'Cards closed · drawing next';
+  }
+
+  let firstLoad = true;
+  async function load() {
+    try {
+      const res = await fetch('/api/leaderboard', { cache: 'no-store', headers: { Accept: 'application/json' } });
+      if (!res.ok || !(res.headers.get('content-type') || '').includes('json')) throw new Error(res.status);
+      const d = await res.json();
+      $('test').hidden = !d.testMode;
+      $('players').textContent = d.players;
+      $('tickets').textContent = d.tickets;
+      $('updated').textContent = 'Updated ' + new Date(d.updated).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+      lastRows = d.rows;
+      syncWinner(d.winner, firstLoad);
+      firstLoad = false;
+      const rows = d.rows.slice(0, 10);
+      $('board').innerHTML = rows.length
+        ? '<ol>' + rows.map(r => {
+            const moved = prev.has(r.id) && prev.get(r.id) !== r.tickets;
+            return `<li class="${r.rank <= 3 ? 'r' + r.rank : ''}${moved || (prev.size && !prev.has(r.id)) ? ' flash' : ''}">
+              <span class="rk">${r.rank}</span>
+              <span class="who"><b>${esc(r.name)}</b>${r.org ? `<span>${esc(r.org)}</span>` : ''}</span>
+              <span class="tix"><b>${r.tickets}</b>${r.tickets === 1 ? 'ticket' : 'tickets'}</span></li>`;
+          }).join('') + '</ol>'
+        : '<p class="empty">No cards turned in yet. Be the first on the board!</p>';
+      prev.clear();
+      d.rows.forEach(r => prev.set(r.id, r.tickets));
+      setTimeout(() => document.querySelectorAll('li.flash').forEach(li => li.classList.remove('flash')), 2500);
+    } catch {
+      $('updated').textContent = 'Reconnecting…';
+    }
+  }
+
+  // ---- Winner reveal ---------------------------------------------------
+  let shownAt = null;      // winner currently on this screen
+  let dismissedAt = null;  // winner this screen chose to hide
+  let rolling = false;
+  let lastRows = [];
+  const reveal = $('reveal');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function confetti() {
+    if (reduce) return;
+    const colors = ['#FBDB73', '#E3B534', '#FFFFFF', '#6E8FD6', '#C0481C'];
+    for (let i = 0; i < 90; i++) {
+      const c = document.createElement('span');
+      c.className = 'confetti';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.background = colors[i % colors.length];
+      c.style.animationDuration = 2.5 + Math.random() * 2.5 + 's';
+      c.style.animationDelay = Math.random() * 0.8 + 's';
+      reveal.appendChild(c);
+      setTimeout(() => c.remove(), 6000);
+    }
+  }
+
+  function setFinal(w) {
+    $('rollName').textContent = w.name;
+    $('rollName').classList.add('final');
+    $('rollOrg').textContent = w.org || '';
+    $('rollTix').textContent = `${w.tickets} ${w.tickets === 1 ? 'ticket' : 'tickets'}` + (w.round > 1 ? ` · draw #${w.round}` : '');
+    $('rollTest').hidden = !w.test;
+  }
+
+  async function showWinner(w, animate) {
+    shownAt = w.at;
+    reveal.hidden = false;
+    $('rollName').classList.remove('final');
+    $('rollOrg').textContent = ''; $('rollTix').textContent = ''; $('rollTest').hidden = true;
+    if (!animate || reduce || rolling) { setFinal(w); return; }
+    rolling = true;
+    const names = lastRows.length ? lastRows.map(r => r.name) : [w.name];
+    let delay = 60;
+    const end = performance.now() + 3800;
+    while (performance.now() < end) {
+      $('rollName').textContent = names[Math.floor(Math.random() * names.length)];
+      await new Promise(r => setTimeout(r, delay));
+      delay = Math.min(260, delay * 1.08);
+    }
+    rolling = false;
+    setFinal(w);
+    confetti();
+  }
+
+  function hideWinner() { reveal.hidden = true; shownAt = null; }
+  $('revealClose').addEventListener('click', () => { dismissedAt = shownAt; hideWinner(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !reveal.hidden) { dismissedAt = shownAt; hideWinner(); } });
+
+  function syncWinner(w, firstLoad) {
+    if (!w) { if (!reveal.hidden && !rolling) hideWinner(); return; }
+    if (w.at === shownAt || w.at === dismissedAt) return;
+    showWinner(w, !firstLoad);
+  }
+
+  // ---- Staff controls (?staff) -------------------------------------------
+  const STAFF = new URLSearchParams(location.search).has('staff');
+  const KEY = 'wvarf-synergy:staff-key';
+  let staffKey = '';
+  try { staffKey = sessionStorage.getItem(KEY) || ''; } catch {}
+  const msg = (t, bad) => { $('staffMsg').textContent = t; $('staffMsg').className = 'note' + (bad ? ' bad' : ''); };
+
+  async function staffCall(method, body) {
+    const res = await fetch('/api/draw', { method, headers: { 'x-staff-key': staffKey, 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+    const j = await res.json().catch(() => ({}));
+    if (res.status === 401 || res.status === 503) {
+      try { sessionStorage.removeItem(KEY); } catch {}
+      staffKey = ''; $('staffTools').hidden = true; $('staffLogin').hidden = false;
+      throw new Error(j.error || 'Not allowed');
+    }
+    if (!res.ok) throw new Error(j.error || 'Error ' + res.status);
+    return j;
+  }
+
+  async function draw(again) {
+    if (!again && Date.now() < CLOSES && Date.now() > OPENS - 6 * 3600e3 &&
+        !confirm('Cards are still open until 12:40 PM. Draw the winner now anyway?')) return;
+    ['drawBtn', 'againBtn', 'clearBtn'].forEach(id => $(id).disabled = true);
+    msg(again ? 'Drawing again…' : 'Drawing…');
+    try {
+      const j = await staffCall('POST', { again });
+      dismissedAt = null;
+      msg(`Drawn from ${j.pool.players} players and ${j.pool.tickets} tickets.`);
+      await showWinner(j.winner, true);
+    } catch (e) { msg(e.message, true); }
+    finally { ['drawBtn', 'againBtn', 'clearBtn'].forEach(id => $(id).disabled = false); }
+  }
+
+  if (STAFF) {
+    $('staff').hidden = false;
+    if (staffKey) { $('staffLogin').hidden = true; $('staffTools').hidden = false; }
+    $('staffLogin').addEventListener('submit', e => {
+      e.preventDefault();
+      staffKey = $('staffKey').value.trim();
+      try { sessionStorage.setItem(KEY, staffKey); } catch {}
+      $('staffLogin').hidden = true; $('staffTools').hidden = false; msg('Unlocked.');
+    });
+    $('drawBtn').addEventListener('click', () => draw(false));
+    $('againBtn').addEventListener('click', () => draw(true));
+    $('clearBtn').addEventListener('click', async () => {
+      if (!confirm('Clear the winner from every screen?')) return;
+      try { await staffCall('DELETE'); hideWinner(); dismissedAt = null; msg('Winner cleared.'); } catch (e) { msg(e.message, true); }
+    });
+    $('hideBtn').addEventListener('click', () => { $('staff').hidden = true; $('staffShow').hidden = false; });
+    $('staffShow').addEventListener('click', () => { $('staff').hidden = false; $('staffShow').hidden = true; });
+  }
+
+  const tick = () => { $('window').textContent = windowText(); };
+  tick(); setInterval(tick, 15000);
+  load(); setInterval(load, POLL_MS);
+})();
+</script>
+</body>
+</html>

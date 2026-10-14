@@ -1,0 +1,9 @@
+{
+  "name": "wvarf-statewide-synergy-site",
+  "private": true,
+  "type": "module",
+  "description": "Prebuilt Statewide Synergy app plus the Challenge leaderboard functions.",
+  "dependencies": {
+    "@netlify/blobs": "^11.1.4"
+  }
+}

@@ -1,0 +1,17 @@
+/* Layout fixes layered over the compiled app's styles. */
+
+/* Home quick links (6 tiles): 2 x 3 on phones, 3 x 2 on wider screens. */
+.quick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 600px) {
+  .quick-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Home speakers: 3 across on phones, 4 across on wider screens. The
+   collapsed view shows full rows only: 3 + 3 on phones, 4 + 4 wider. */
+.speaker-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (min-width: 700px) {
+  .speaker-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 699.98px) {
+  .speaker-block:has(.speaker-more[aria-expanded="false"]) .speaker-grid > li:nth-child(n + 7) { display: none; }
+}

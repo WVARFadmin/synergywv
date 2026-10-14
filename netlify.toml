@@ -1,0 +1,89 @@
+# Statewide Synergy — prebuilt app in /site plus the Challenge functions.
+# No build step for the app itself; Netlify only installs @netlify/blobs and
+# bundles the two functions in netlify/functions.
+
+[build]
+  publish = "site"
+  command = "echo 'App is prebuilt in /site'"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# ---- Redirects -------------------------------------------------------------
+# Big-screen leaderboard for the room: https://<site>/leaderboard
+[[redirects]]
+  from = "/photos"
+  to = "/photos.html"
+  status = 200
+
+[[redirects]]
+  from = "/leaderboard"
+  to = "/leaderboard.html"
+  status = 200
+
+# ---- Update settings -------------------------------------------------------
+# These files decide which version of the app a phone runs. Always re-check
+# them so a fix pushed during the conference reaches phones on the next open.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/registerSW.js"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"
+    Content-Type = "application/manifest+json"
+
+[[headers]]
+  for = "/live/*"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/photos.html"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/leaderboard.html"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"
+
+# Hashed build files never change under the same name: cache for a year.
+[[headers]]
+  for = "/assets/index-*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/workbox-*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ---- Security --------------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "geolocation=(), microphone=(), payment=()"
