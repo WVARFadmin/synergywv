@@ -26,10 +26,11 @@ It is ready to put on **Nita's own GitHub and Netlify**. Follow Parts 1–6 in o
 | `site/live/overrides.css` | Home-page grid fixes. |
 | `site/live/jszip.min.js` | Zip download on the photos page. |
 | `site/leaderboard.html` | Projector page at `/leaderboard`. Staff drawing controls appear at `/leaderboard?staff`. |
-| `site/photos.html` | Staff photo gallery at `/photos`. |
+| `site/photos.html` | Staff photo gallery at `/photos`: view, download or delete photos. |
+| `site/players.html` | Staff player list at `/players`: fix names, take duplicates off the board. |
 | `site/sw.js` | Offline and update service worker (fixed version). |
 | `site/__forms.html` | Hidden form definitions Netlify needs for its forms. **Do not delete.** |
-| `netlify/functions/` | Five server functions: `submission-created`, `leaderboard`, `draw`, `photos`, `photo`. |
+| `netlify/functions/` | Seven server functions: `submission-created`, `card`, `leaderboard`, `draw`, `players`, `photos`, `photo`. |
 | `netlify/lib/` | Code shared by those functions. |
 | `netlify.toml` | Netlify settings: publish folder, functions, redirects, cache headers. |
 | `package.json` | Tells Netlify to install `@netlify/blobs` for the functions. |
@@ -125,8 +126,9 @@ Replace `YOURSITE` below with the site's address, e.g. `wvarf-synergy.netlify.ap
 
 | Check | Where | What you should see |
 |---|---|---|
-| Deploy | Deploys | The latest deploy says **Published**, and its log mentions **5 functions**. |
-| Functions | Logs → Functions | `draw`, `leaderboard`, `photo`, `photos`, `submission-created` |
+| Deploy | Deploys | The latest deploy says **Published**, and its log mentions **7 functions**. |
+| Functions | Logs → Functions | `card`, `draw`, `leaderboard`, `photo`, `photos`, `players`, `submission-created` |
+| Players | `https://YOURSITE/players` | A staff-key prompt |
 | Forms | Forms | `challenge-entry`, `challenge-photo`, `session-feedback`, `conference-feedback` |
 | Leaderboard data | `https://YOURSITE/api/leaderboard` | Text starting `{"updated":...,"testMode":true,"players":0` |
 | Projector | `https://YOURSITE/leaderboard` | Navy board saying "No cards turned in yet" |
@@ -158,14 +160,15 @@ On **Oct 22 at midnight Eastern**, test cards and test drawings drop off the boa
 
    *Code words:* WVABLE = **ABLE**, Down Syndrome Network = **TOGETHER**. Every other required answer needs at least 2 characters, and the session dropdowns must be picked.
 2. **Update a score:** complete another square, then tap **Update my card**, or **Update my score** in the leaderboard panel. The board updates.
-3. **Add a photo** to **Badge twin** or **Synergy Snapshot**. Then open `/photos`, enter the staff key, and the photo appears. Try **Download** and **Download all (.zip)**.
+3. **Add a photo** to **Badge twin** or **Synergy Snapshot**. Then open `/photos`, enter the staff key, and the photo appears. Try **Download**, **Download all (.zip)** and **Delete**.
 4. **Try the drawing:**
    1. Have 2–3 people turn in cards with different numbers of squares.
    2. Open `/leaderboard?staff`, enter the staff key and click **Draw winner**. Names roll, then the winner shows full screen with confetti.
    3. Try **Draw again**, which skips anyone already drawn.
    4. Click **Clear winner**.
    5. On a phone, check that the Challenge page shows the winner while one is drawn.
-5. **Clean up:** in Netlify **Forms**, delete the test submissions under `challenge-entry` and `challenge-photo`. That keeps them out of the backup CSV drawing and the photo list.
+5. **Fix a duplicate:** turn in a second card with the same name but a different email. Open `/players` (or **Fix names or duplicates** on the `?staff` panel). Both cards are marked "Possible duplicate". Tap **Remove from board** on one, and **Edit** to correct a name or organization.
+6. **Clean up:** on `/players`, **Remove from board** then **Delete for good** each test card; on `/photos`, **Delete** each test photo. Then in Netlify **Forms**, delete the test submissions under `challenge-entry` and `challenge-photo`. That keeps them out of the backup CSV drawing and the photo list.
 
 ---
 
@@ -198,6 +201,8 @@ These are all problems we actually hit while testing.
 |---|---|
 | **Turn in my card** is grey | Needs a name **and** at least one completed square. A hint now says so. |
 | Button stuck on "Sending…" | Fixed. The app now gives up after 15 seconds, keeps the card on the phone and resends it later. Netlify usually *did* receive it. |
+| Score only updated the first time | Fixed Oct 14. Netlify only runs `submission-created` for submissions its spam filter accepts, and repeat cards from one person can be held back as spam (check Forms → challenge-entry → **Spam submissions**). The app now also sends each card straight to the board through `/api/card`. |
+| Duplicate player on the board | Open `/players`, **Remove from board** on the extra card. Use **Edit** to fix a misspelled name or organization. |
 | Leaderboard empty | Before Oct 22 it shows test cards. After Oct 22 only cards from that day count. If `LEADERBOARD_SINCE` is set, check its date. |
 | Leaderboard missing on a phone | The summary sits under "How to play" and the full board at the bottom. Fully close and reopen the app after a deploy. A home-screen app can take two openings to update. |
 | Photo links in Netlify's Forms page won't open | Seen on Mike's network in every browser. Use `/photos` instead: it serves the photos from your own site. |
@@ -264,8 +269,10 @@ All use Netlify Blobs; none need an API token.
 | `submission-created` | Netlify event | Fires on every **verified** (non-spam) form submission. For `challenge-entry`, it saves the player's latest card to the Blobs store `challenge-leaderboard`, keyed by player id. Older resends are ignored, and tickets are capped at what the card allows (9 squares + 8 lines × 2 + 5 = **30**). For `challenge-photo`, it downloads the file from Netlify's short-lived URL and saves the bytes plus metadata to `challenge-photos`; on failure it logs the payload's field names. |
 | `leaderboard` | `GET /api/leaderboard` | Public. First name + last initial and org only, ranked, with ties sharing a rank. Includes `testMode` and the current `winner` (full name + org) if one has been drawn. CDN-cached for 5 s. |
 | `draw` | `POST/DELETE /api/draw` | Needs header `x-staff-key`. Weighted random pick via `crypto.randomInt`; `{"again":true}` skips anyone already drawn. Saves to the Blobs store `challenge-draw` under key `current`. A draw made in test mode is flagged and hidden once test mode ends. |
+| `card` | `POST /api/card` | Public. The app sends every turned-in card here as well as to Forms, so a score updates even when Netlify holds a repeat submission back as spam. Same `saveCard()` and ticket cap as the Forms path; a `submitted_at` in the future is replaced with now. |
+| `players` | `GET /api/players`, `PATCH/DELETE /api/players/:id` | Staff only. Lists every card (full name, email, org, removed/edited). PATCH `{name, org}` saves a staff edit; `{removed: true/false}` takes a card off the board or puts it back; DELETE removes it for good. Edits and removals are kept when the player updates later (`saveCard()` carries them over); `withEdits()` applies them in `loadEntries()`, so the board, drawing and winner screen all use the corrected name. |
 | `photos` | `GET /api/photos` | Staff only. Lists photos with their metadata. |
-| `photo` | `GET /api/photo/:id` | Staff only. Returns one photo's image. |
+| `photo` | `GET/DELETE /api/photo/:id` | Staff only. Returns one photo's image, or deletes it. |
 
 **Test mode:** `boardSettings()` in `netlify/lib/challenge.mjs` decides it. Before `2026-10-22T00:00:00-04:00`, every card counts. From that time on, only cards from that day count. `LEADERBOARD_SINCE` overrides both.
 

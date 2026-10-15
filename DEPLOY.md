@@ -7,7 +7,8 @@ This folder is Nita's finished app (`site/`) plus three additions:
 1. **Update settings** (`netlify.toml`, `site/sw.js`): phones pick up new versions quickly, and offline mode now works.
 2. **Live leaderboard functions** (`netlify/`): these save each turned-in Challenge card and serve the standings.
 3. **Leaderboard screens** (`site/live/`, `site/leaderboard.html`): a live panel at the bottom of the in-app Challenge screen, and a full-screen board for a projector at `/leaderboard`.
-4. **Staff photo gallery** (`site/photos.html`): view and download Challenge photos at `/photos`, protected by a staff password.
+4. **Staff photo gallery** (`site/photos.html`): view, download and delete Challenge photos at `/photos`, protected by a staff password.
+5. **Staff player list** (`site/players.html`): fix names and remove duplicate cards at `/players`, same staff password.
 
 ## Deploying
 

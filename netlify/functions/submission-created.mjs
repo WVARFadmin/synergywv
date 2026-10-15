@@ -3,20 +3,13 @@
 //  - challenge-entry: saves the player's latest card for the leaderboard.
 //  - challenge-photo: copies the photo into Netlify Blobs for the staff
 //    gallery at /photos.
-import { getStore } from '@netlify/blobs';
-import { STORE, toEntry } from '../lib/challenge.mjs';
+import { saveCard } from '../lib/challenge.mjs';
 import { findFile, photoStore } from '../lib/photos.mjs';
 
 const clip = (v, n) => String(v ?? '').trim().slice(0, n);
 
 async function saveEntry(p, data) {
-  const entry = toEntry(data, p.created_at);
-  if (!entry) return;
-  const store = getStore({ name: STORE, consistency: 'strong' });
-  const existing = await store.get(entry.id, { type: 'json' });
-  // A slow, older resend must not overwrite a newer card.
-  if (existing && Date.parse(existing.at) > Date.parse(entry.at)) return;
-  await store.setJSON(entry.id, entry);
+  await saveCard(data, p.created_at);
 }
 
 async function savePhoto(p, data) {

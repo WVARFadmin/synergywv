@@ -67,12 +67,39 @@ export function toEntry(data, createdAt) {
   };
 }
 
-// Cards that count: on or after `since`, not hidden, with at least 1 ticket.
+// Save a turned-in card. Called both by submission-created (Netlify Forms)
+// and by the app directly through /api/card, so a score still updates if
+// Netlify's spam filter holds back a repeat form submission. Keeps any staff
+// edits (name/org) and the staff "removed" flag across later updates.
+export async function saveCard(data, createdAt) {
+  const entry = toEntry(data, createdAt);
+  if (!entry) return { saved: false, reason: 'no name' };
+  const store = getStore({ name: STORE, consistency: 'strong' });
+  const existing = await store.get(entry.id, { type: 'json' }).catch(() => null);
+  // A slow, older resend must not overwrite a newer card.
+  if (existing && Date.parse(existing.at) > Date.parse(entry.at)) return { saved: false, reason: 'older' };
+  if (existing?.edit) entry.edit = existing.edit;
+  if (existing?.removed) entry.removed = existing.removed;
+  await store.setJSON(entry.id, entry);
+  return { saved: true, id: entry.id };
+}
+
+// Apply a staff edit (corrected name or organization) to a stored card.
+export function withEdits(e) {
+  if (!e || !e.edit) return e;
+  const out = { ...e };
+  if (e.edit.name) { out.fullName = e.edit.name; out.name = displayName(e.edit.name); }
+  if (e.edit.org != null) out.org = e.edit.org;
+  return out;
+}
+
+// Cards that count: on or after `since`, not hidden or removed by staff, with
+// at least 1 ticket.
 export function eligible(entries, { since, hide = [] } = {}) {
   const sinceMs = Date.parse(since || DEFAULT_SINCE);
   const hidden = new Set(hide.map(h => h.trim().toLowerCase()).filter(Boolean));
   return entries
-    .filter(e => e && e.tickets > 0)
+    .filter(e => e && e.tickets > 0 && !e.removed)
     .filter(e => !(Date.parse(e.at) < sinceMs))
     .filter(e => !(e.match || []).some(m => hidden.has(m)));
 }
@@ -103,7 +130,7 @@ export function boardSettings(now = Date.now()) {
 export async function loadEntries() {
   const store = getStore({ name: STORE, consistency: 'strong' });
   const { blobs } = await store.list();
-  return Promise.all(blobs.map(b => store.get(b.key, { type: 'json' }).catch(() => null)));
+  return (await Promise.all(blobs.map(b => store.get(b.key, { type: 'json' }).catch(() => null)))).map(withEdits);
 }
 
 // Weighted draw: every ticket is one chance. Uses the OS's secure random

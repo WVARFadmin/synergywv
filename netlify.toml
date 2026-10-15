@@ -18,6 +18,11 @@
   status = 200
 
 [[redirects]]
+  from = "/players"
+  to = "/players.html"
+  status = 200
+
+[[redirects]]
   from = "/leaderboard"
   to = "/leaderboard.html"
   status = 200
@@ -54,6 +59,12 @@
 
 [[headers]]
   for = "/photos.html"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/players.html"
   [headers.values]
     Cache-Control = "no-cache, max-age=0, must-revalidate"
     X-Robots-Tag = "noindex"

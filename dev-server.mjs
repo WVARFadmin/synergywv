@@ -15,6 +15,8 @@ const lb = (await import('./netlify/functions/leaderboard.mjs')).default;
 const photos = (await import('./netlify/functions/photos.mjs')).default;
 const photo = (await import('./netlify/functions/photo.mjs')).default;
 const draw = (await import('./netlify/functions/draw.mjs')).default;
+const card = (await import('./netlify/functions/card.mjs')).default;
+const players = (await import('./netlify/functions/players.mjs')).default;
 const uploads = new Map(); // stand-in for Netlify's file host
 const ROOT = new URL('./site/', import.meta.url).pathname;
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.webmanifest': 'application/manifest+json' };
@@ -40,7 +42,8 @@ http.createServer(async (req, res) => {
       }
     }
     console.log('FORM', data['form-name'], JSON.stringify(data).slice(0, 160));
-    await sub(new Request('http://x/', { method: 'POST', body: JSON.stringify({ payload: { form_name: data['form-name'], data, created_at: new Date().toISOString() } }) }));
+    // SKIP_FORM_HOOK=1 imitates Netlify holding a submission back as spam.
+    if (!process.env.SKIP_FORM_HOOK) await sub(new Request('http://x/', { method: 'POST', body: JSON.stringify({ payload: { form_name: data['form-name'], data, created_at: new Date().toISOString() } }) }));
     res.writeHead(200, { 'content-type': 'text/html' }); return res.end('ok');
   }
   if (url.pathname.startsWith('/__uploads/')) {
@@ -51,7 +54,7 @@ http.createServer(async (req, res) => {
   if (url.pathname === '/api/photos' || url.pathname.startsWith('/api/photo/')) {
     const r = url.pathname === '/api/photos'
       ? await photos(new Request('http://x' + req.url, { headers: req.headers }))
-      : await photo(new Request('http://x' + req.url, { headers: req.headers }), { params: { id: decodeURIComponent(url.pathname.split('/').pop()) } });
+      : await photo(new Request('http://x' + req.url, { method: req.method, headers: req.headers }), { params: { id: decodeURIComponent(url.pathname.split('/').pop()) } });
     res.writeHead(r.status, Object.fromEntries(r.headers)); return res.end(Buffer.from(await r.arrayBuffer()));
   }
   if (url.pathname === '/api/draw') {
@@ -59,11 +62,19 @@ http.createServer(async (req, res) => {
     const r = await draw(new Request('http://x/api/draw', { method: req.method, headers: req.headers, body: ['GET', 'HEAD'].includes(req.method) ? undefined : Buffer.concat(chunks) }));
     res.writeHead(r.status, Object.fromEntries(r.headers)); return res.end(await r.text());
   }
+  if (url.pathname === '/api/card' || url.pathname === '/api/players' || url.pathname.startsWith('/api/players/')) {
+    const chunks = []; for await (const c of req) chunks.push(c);
+    const body = ['GET', 'HEAD', 'DELETE'].includes(req.method) ? undefined : Buffer.concat(chunks);
+    const rq = new Request('http://x' + req.url, { method: req.method, headers: req.headers, body });
+    const r = url.pathname === '/api/card' ? await card(rq)
+      : await players(rq, { params: { id: url.pathname.startsWith('/api/players/') ? decodeURIComponent(url.pathname.split('/').pop()) : undefined } });
+    res.writeHead(r.status, Object.fromEntries(r.headers)); return res.end(await r.text());
+  }
   if (url.pathname === '/api/leaderboard') {
     const r = await lb();
     res.writeHead(r.status, Object.fromEntries(r.headers)); return res.end(await r.text());
   }
-  let p = url.pathname === '/' ? '/index.html' : url.pathname === '/leaderboard' ? '/leaderboard.html' : url.pathname === '/photos' ? '/photos.html' : url.pathname;
+  let p = url.pathname === '/' ? '/index.html' : url.pathname === '/leaderboard' ? '/leaderboard.html' : url.pathname === '/photos' ? '/photos.html' : url.pathname === '/players' ? '/players.html' : url.pathname;
   const file = normalize(join(ROOT, p));
   try {
     if (!file.startsWith(ROOT) || !(await stat(file)).isFile()) throw 0;
