@@ -3,6 +3,7 @@ import { Header } from './components/Header.jsx';
 import { TabBar, TABS } from './components/TabBar.jsx';
 import { Sheet } from './components/Sheet.jsx';
 import { NotificationsPanel, NotificationBanner } from './components/Notifications.jsx';
+import { ChallengeLiveBanner, challengeLive } from './components/ChallengeLiveBanner.jsx';
 import { notificationsAt } from './data/notifications.js';
 import { HomeScreen } from './screens/HomeScreen.jsx';
 import { AgendaScreen } from './screens/AgendaScreen.jsx';
@@ -12,6 +13,7 @@ import { InfoScreen } from './screens/InfoScreen.jsx';
 import { SessionDetail } from './screens/SessionDetail.jsx';
 import { MaterialsScreen } from './screens/MaterialsScreen.jsx';
 import { ChallengeScreen, CHALLENGE_STAFF } from './screens/ChallengeScreen.jsx';
+import { PhotosScreen } from './screens/PhotosScreen.jsx';
 import { FeedbackScreen, conferenceSurveyOpen, sessionSurveyOpen } from './screens/FeedbackScreen.jsx';
 import { hasSessionSurvey } from './data/surveys.js';
 import { loadDone, saveDone } from './data/surveyStore.js';
@@ -26,6 +28,7 @@ const HEADERS = {
   feedback: { title: 'Feedback',        sub: 'Help shape next year' },
   materials: { title: 'Materials', sub: 'Session PDFs' },
   challenge: { title: 'Connections Challenge', sub: 'Thursday 11:30 AM' },
+  photos: { title: 'Share photos', sub: 'Statewide Synergy 2026' },
 };
 
 const SAVED_KEY = 'wvarf-synergy:saved-v1';
@@ -201,7 +204,7 @@ export default function App() {
       setDetailId(target.sessionId);
       return;
     }
-    const known = TABS.some(t => t.id === target?.tab) || ['challenge', 'feedback'].includes(target?.tab);
+    const known = TABS.some(t => t.id === target?.tab) || ['challenge', 'feedback', 'photos'].includes(target?.tab);
     changeTab(known ? target.tab : 'home', target?.filter);
     if (target?.tab === 'agenda' && target.day) setAgendaDay(target.day);
   };
@@ -215,7 +218,12 @@ export default function App() {
   const released = notificationsAt(now);
   const listed = PREVIEW_NOTIFICATIONS ? notificationsAt(now, { includeScheduled: true }) : released;
   const unread = released.filter(n => !readIds.has(n.id));
-  const newest = overlay ? null : unread[0];
+  // During the Challenge hour its own gold banner takes the top spot, so the
+  // plain Challenge notices don't show a second banner underneath.
+  const [liveHidden, setLiveHidden] = useState(false);
+  const liveNow = challengeLive(now) && !CHALLENGE_STAFF;
+  const showLive = liveNow && !liveHidden && !overlay && tab !== 'challenge';
+  const newest = (overlay || showLive) ? null : unread.find(n => !(liveNow && /^(challenge-|remind-challenge|upnext-d3-1130am)/.test(n.id))) || null;
 
   const detail = detailId ? sessions.find(s => s.id === detailId) : null;
   const headerInfo = detail
@@ -284,6 +292,8 @@ export default function App() {
     screen = <InfoScreen onNavigate={changeTab} />;
   } else if (tab === 'challenge') {
     screen = <ChallengeScreen now={now} />;
+  } else if (tab === 'photos') {
+    screen = <PhotosScreen />;
   } else if (tab === 'materials') {
     screen = <MaterialsScreen sessions={sessions} onOpenSession={openSession} />;
   } else if (tab === 'feedback') {
@@ -309,8 +319,17 @@ export default function App() {
         unread={unread.length}
         notificationsOpen={overlay === 'notifications'}
         onNotifications={() => setOverlay('notifications')}
+        onPhotos={() => { changeTab('photos'); window.scrollTo(0, 0); }}
+        photosActive={!detail && tab === 'photos'}
       />
       <main className="app-main">
+      {showLive && (
+        <ChallengeLiveBanner
+          now={now}
+          onOpen={() => { changeTab('challenge'); window.scrollTo(0, 0); }}
+          onDismiss={() => setLiveHidden(true)}
+        />
+      )}
       {newest && (
         <NotificationBanner
           item={newest}

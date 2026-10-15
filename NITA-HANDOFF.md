@@ -30,7 +30,7 @@ It is ready to put on **Nita's own GitHub and Netlify**. Follow Parts 1–6 in o
 | `site/players.html` | Staff player list at `/players`: fix names, take duplicates off the board. |
 | `site/sw.js` | Offline and update service worker (fixed version). |
 | `site/__forms.html` | Hidden form definitions Netlify needs for its forms. **Do not delete.** |
-| `netlify/functions/` | Seven server functions: `submission-created`, `card`, `leaderboard`, `draw`, `players`, `photos`, `photo`. |
+| `netlify/functions/` | Eight server functions: `submission-created`, `card`, `upload`, `leaderboard`, `draw`, `players`, `photos`, `photo`. |
 | `netlify/lib/` | Code shared by those functions. |
 | `netlify.toml` | Netlify settings: publish folder, functions, redirects, cache headers. |
 | `package.json` | Tells Netlify to install `@netlify/blobs` for the functions. |
@@ -126,10 +126,10 @@ Replace `YOURSITE` below with the site's address, e.g. `wvarf-synergy.netlify.ap
 
 | Check | Where | What you should see |
 |---|---|---|
-| Deploy | Deploys | The latest deploy says **Published**, and its log mentions **7 functions**. |
-| Functions | Logs → Functions | `card`, `draw`, `leaderboard`, `photo`, `photos`, `players`, `submission-created` |
+| Deploy | Deploys | The latest deploy says **Published**, and its log mentions **8 functions**. |
+| Functions | Logs → Functions | `card`, `draw`, `leaderboard`, `photo`, `photos`, `players`, `submission-created`, `upload` |
 | Players | `https://YOURSITE/players` | A staff-key prompt |
-| Forms | Forms | `challenge-entry`, `challenge-photo`, `session-feedback`, `conference-feedback` |
+| Forms | Forms | `challenge-entry`, `challenge-photo`, `conference-photo`, `session-feedback`, `conference-feedback` |
 | Leaderboard data | `https://YOURSITE/api/leaderboard` | Text starting `{"updated":...,"testMode":true,"players":0` |
 | Projector | `https://YOURSITE/leaderboard` | Navy board saying "No cards turned in yet" |
 | Staff drawing | `https://YOURSITE/leaderboard?staff` | A staff panel bottom-right asking for the staff key |
@@ -160,7 +160,7 @@ On **Oct 22 at midnight Eastern**, test cards and test drawings drop off the boa
 
    *Code words:* WVABLE = **ABLE**, Down Syndrome Network = **TOGETHER**. Every other required answer needs at least 2 characters, and the session dropdowns must be picked.
 2. **Update a score:** complete another square, then tap **Update my card**, or **Update my score** in the leaderboard panel. The board updates.
-3. **Add a photo** to **Badge twin** or **Synergy Snapshot**. Then open `/photos`, enter the staff key, and the photo appears. Try **Download**, **Download all (.zip)** and **Delete**.
+3. **Add a photo** to **Badge twin** or **Synergy Snapshot**. Then open `/photos`, enter the staff key, and the photo appears. Try **Download**, **Download all (.zip)** and **Delete**. Also tap the **camera** at the top left of the app, add a name, tick the photo release and share a photo: it shows on `/photos` as "Shared photo · Release agreed" (use the **Show** filter).
 4. **Try the drawing:**
    1. Have 2–3 people turn in cards with different numbers of squares.
    2. Open `/leaderboard?staff`, enter the staff key and click **Draw winner**. Names roll, then the winner shows full screen with confetti.
@@ -188,7 +188,7 @@ On **Oct 22 at midnight Eastern**, test cards and test drawings drop off the boa
 **Backup drawing:** if anything fails, use the original method. In Netlify, go to **Forms → challenge-entry → Download as CSV**. Then open the app with `?challenge-staff` added to the address, load the CSV and tap **Draw**.
 
 **After the event:**
-- **Photos:** go to `/photos` → tick **Only photos marked OK to share** → **Download all (.zip)**.
+- **Photos:** go to `/photos` → pick **Shared photos** or **Challenge photos** under **Show**, tick **Only photos OK to share** → **Download all (.zip)**.
 - **Feedback:** download it from Forms → `session-feedback` and `conference-feedback`.
 
 ---
@@ -269,6 +269,7 @@ All use Netlify Blobs; none need an API token.
 | `submission-created` | Netlify event | Fires on every **verified** (non-spam) form submission. For `challenge-entry`, it saves the player's latest card to the Blobs store `challenge-leaderboard`, keyed by player id. Older resends are ignored, and tickets are capped at what the card allows (9 squares + 8 lines × 2 + 5 = **30**). For `challenge-photo`, it downloads the file from Netlify's short-lived URL and saves the bytes plus metadata to `challenge-photos`; on failure it logs the payload's field names. |
 | `leaderboard` | `GET /api/leaderboard` | Public. First name + last initial and org only, ranked, with ties sharing a rank. Includes `testMode` and the current `winner` (full name + org) if one has been drawn. CDN-cached for 5 s. |
 | `draw` | `POST/DELETE /api/draw` | Needs header `x-staff-key`. Weighted random pick via `crypto.randomInt`; `{"again":true}` skips anyone already drawn. Saves to the Blobs store `challenge-draw` under key `current`. A draw made in test mode is flagged and hidden once test mode ends. |
+| `upload` | `POST /api/upload` | Public. Photos from the app (Challenge squares and the Share photos page), multipart, ≤ 5 MB, images only, saved straight to `challenge-photos` with `kind` (`challenge`/`conference`) and `release`. Conference photos without `release=Yes` are refused. The app falls back to Netlify Forms (`challenge-photo` / `conference-photo`) only if this returns 404. |
 | `card` | `POST /api/card` | Public. The app sends every turned-in card here as well as to Forms, so a score updates even when Netlify holds a repeat submission back as spam. Same `saveCard()` and ticket cap as the Forms path; a `submitted_at` in the future is replaced with now. |
 | `players` | `GET /api/players`, `PATCH/DELETE /api/players/:id` | Staff only. Lists every card (full name, email, org, removed/edited). PATCH `{name, org}` saves a staff edit; `{removed: true/false}` takes a card off the board or puts it back; DELETE removes it for good. Edits and removals are kept when the player updates later (`saveCard()` carries them over); `withEdits()` applies them in `loadEntries()`, so the board, drawing and winner screen all use the corrected name. |
 | `photos` | `GET /api/photos` | Staff only. Lists photos with their metadata. |

@@ -40,6 +40,8 @@
   .tag { justify-self: start; font-size: 13px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
   .tag.ok { background: var(--ok-bg); color: var(--ok); }
   .tag.no { background: var(--bad-bg); color: var(--bad); }
+  .tag.kind { background: var(--navy-soft); color: var(--navy); }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; }
   .ph .btn { min-height: 40px; font-size: 15px; }
   .ph .actions { margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap; }
   .ph button.del { border-color: var(--bad); color: var(--bad); }
@@ -65,7 +67,13 @@
   <section id="gallery" hidden>
     <div class="row toolbar">
       <div class="row" role="group" aria-label="Filter">
-        <label class="row" style="margin:0;font-weight:400"><input type="checkbox" id="shareOnly"> Only photos marked OK to share</label>
+        <label for="kind" style="margin:0">Show</label>
+        <select id="kind" style="min-height:44px;padding:6px 10px;font:inherit;border:1px solid var(--fg2);border-radius:10px">
+          <option value="">All photos</option>
+          <option value="conference">Shared photos (with release)</option>
+          <option value="challenge">Challenge photos</option>
+        </select>
+        <label class="row" style="margin:0;font-weight:400"><input type="checkbox" id="shareOnly"> Only photos OK to share</label>
       </div>
       <div class="row">
         <button type="button" id="refresh">Refresh</button>
@@ -112,8 +120,15 @@
     const u = URL.createObjectURL(blob); urls.set(p.id, u); return u;
   }
 
+  // Filters: photo type, and only ones OK to share (Challenge photos ticked
+  // "WVARF may share", or shared photos with the release agreed).
+  function shown() {
+    const k = $('kind').value;
+    return photos.filter(p => (!k || (p.kind || 'challenge') === k) && (!$('shareOnly').checked || p.share));
+  }
+
   function render() {
-    const list = $('shareOnly').checked ? photos.filter(p => p.share) : photos;
+    const list = shown();
     $('status').textContent = `${list.length} photo${list.length === 1 ? '' : 's'}` + (photos.some(p => p.error) ? ' · some could not be copied (see cards)' : '');
     $('grid').innerHTML = list.map(p => `
       <li class="ph" data-id="${esc(p.id)}">
@@ -123,7 +138,10 @@
           <span class="meta">${esc(p.name || 'Unknown')}${p.email ? ' · ' + esc(p.email) : ''}</span>
           ${p.caption ? `<span class="meta">“${esc(p.caption)}”</span>` : ''}
           <span class="meta">${p.at ? new Date(p.at).toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) : ''}</span>
-          <span class="tag ${p.share ? 'ok' : 'no'}">${p.share ? 'OK to share' : 'Do not share'}</span>
+          <span class="tags">
+            <span class="tag kind">${p.kind === 'conference' ? 'Shared photo' : 'Challenge'}</span>
+            <span class="tag ${p.share ? 'ok' : 'no'}">${p.kind === 'conference' ? (p.release ? 'Release agreed' : 'No release') : (p.share ? 'OK to share' : 'Do not share')}</span>
+          </span>
           <div class="actions">
             ${p.error ? '' : `<a class="btn" href="#" data-dl="${esc(p.id)}">Download<span class="sr-only"> ${esc(p.square)} photo from ${esc(p.name)}</span></a>`}
             <button type="button" class="del" data-del="${esc(p.id)}">Delete<span class="sr-only"> ${esc(p.square || 'photo')} from ${esc(p.name || 'unknown')}</span></button>
@@ -163,6 +181,7 @@
   $('logout').addEventListener('click', () => { key = ''; try { sessionStorage.removeItem(KEY); } catch {} showLogin('Signed out.'); });
   $('refresh').addEventListener('click', load);
   $('shareOnly').addEventListener('change', render);
+  $('kind').addEventListener('change', render);
 
   // Delete removes the photo from this gallery for good. (A copy may still
   // sit in Netlify → Forms → challenge-photo; delete it there too if needed.)
@@ -195,7 +214,7 @@
 
   $('zip').addEventListener('click', async () => {
     if (!window.JSZip) { $('status').textContent = 'Zip tool still loading — try again in a moment.'; return; }
-    const list = ($('shareOnly').checked ? photos.filter(p => p.share) : photos).filter(p => !p.error);
+    const list = shown().filter(p => !p.error);
     const btn = $('zip'); btn.disabled = true;
     try {
       const zip = new JSZip();
@@ -208,7 +227,7 @@
       const out = await zip.generateAsync({ type: 'blob' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(out);
-      link.download = $('shareOnly').checked ? 'challenge-photos-shareable.zip' : 'challenge-photos-all.zip';
+      link.download = `synergy-${$('kind').value || 'all'}-photos${$('shareOnly').checked ? '-shareable' : ''}.zip`;
       link.click();
       $('status').textContent = `Downloaded ${list.length} photo${list.length === 1 ? '' : 's'}.`;
     } catch (e) {

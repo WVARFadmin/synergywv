@@ -1,4 +1,4 @@
-import { Home, CalendarDays, MapPin, Users, Info, MessageSquareText, FileText, Sparkles } from 'lucide-react';
+import { Home, CalendarDays, MapPin, Users, Info, MessageSquareText, FileText, Sparkles, Camera } from 'lucide-react';
 
 export const TABS = [
   { id: 'home',   icon: Home,         label: 'Home' },
@@ -37,6 +37,14 @@ export function TabBar({ active, onChange }) {
       >
         <Sparkles size={22} />
         <span>Challenge</span>
+      </button>
+      <button
+        className={`tb tb-wide-only ${active === 'photos' ? 'active' : ''}`}
+        onClick={() => onChange('photos')}
+        aria-current={active === 'photos' ? 'page' : undefined}
+      >
+        <Camera size={22} />
+        <span>Photos</span>
       </button>
     </nav>
   );

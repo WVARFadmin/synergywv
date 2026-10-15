@@ -1,15 +1,18 @@
-import { Bell } from 'lucide-react';
+import { Bell, Camera } from 'lucide-react';
 import { WvarfLogo } from './WvarfLogo.jsx';
 
-export function Header({ title, subtitle, logo = false, unread = 0, notificationsOpen, onNotifications }) {
+export function Header({ title, subtitle, logo = false, unread = 0, notificationsOpen, onNotifications, onPhotos, photosActive = false }) {
   const bellLabel = unread
     ? `Notifications, ${unread} unread`
     : 'Notifications';
   return (
     <div className="app-header">
       <div className="row">
-        {/* Spacer the same size as the bell, so the title stays centered. */}
-        <span className="hbtn hbtn-spacer" aria-hidden="true" />
+        {/* Phones: share conference photos. Computers use "Photos" in the
+            sidebar, so this button is hidden there (see app.css). */}
+        <button type="button" className={`hbtn hbtn-photos${photosActive ? ' active' : ''}`} aria-label="Share conference photos" onClick={onPhotos}>
+          <Camera />
+        </button>
         {logo ? (
           <div className="header-brand">
             <WvarfLogo height={38} mark reverse className="header-logo" alt="WVARF" />

@@ -1,8 +1,9 @@
 // Runs automatically on every verified Netlify Forms submission (spam is
 // filtered out before this fires).
 //  - challenge-entry: saves the player's latest card for the leaderboard.
-//  - challenge-photo: copies the photo into Netlify Blobs for the staff
-//    gallery at /photos.
+//  - challenge-photo / conference-photo: copies the photo into Netlify Blobs
+//    for the staff gallery at /photos. (The app normally uploads photos
+//    straight to /api/upload; Forms is the fallback.)
 import { saveCard } from '../lib/challenge.mjs';
 import { findFile, photoStore } from '../lib/photos.mjs';
 
@@ -12,7 +13,7 @@ async function saveEntry(p, data) {
   await saveCard(data, p.created_at);
 }
 
-async function savePhoto(p, data) {
+async function savePhoto(p, data, kind = 'challenge') {
   const at = p.created_at || new Date().toISOString();
   const id = `${Date.parse(at) || Date.now()}-${String(p.id || Math.random().toString(36).slice(2)).slice(-12)}`;
   const metadata = {
@@ -22,7 +23,10 @@ async function savePhoto(p, data) {
     square: clip(data.square, 80),
     caption: clip(data.caption, 300),
     share: String(data.share_ok).toLowerCase() === 'yes',
+    kind,
+    release: String(data.release).toLowerCase() === 'yes',
   };
+  if (kind === 'conference') { metadata.square = metadata.square || 'Conference photo'; metadata.share = metadata.release; }
   const store = photoStore();
   const file = findFile(data);
   if (!file) {
@@ -50,5 +54,6 @@ export default async (req) => {
   const form = p.form_name || data['form-name'];
   if (form === 'challenge-entry') await saveEntry(p, data);
   else if (form === 'challenge-photo') await savePhoto(p, data);
+  else if (form === 'conference-photo') await savePhoto(p, data, 'conference');
   return new Response(null, { status: 204 });
 };

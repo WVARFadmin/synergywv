@@ -17,6 +17,7 @@ const photo = (await import('./netlify/functions/photo.mjs')).default;
 const draw = (await import('./netlify/functions/draw.mjs')).default;
 const card = (await import('./netlify/functions/card.mjs')).default;
 const players = (await import('./netlify/functions/players.mjs')).default;
+const upload = (await import('./netlify/functions/upload.mjs')).default;
 const uploads = new Map(); // stand-in for Netlify's file host
 const ROOT = new URL('./site/', import.meta.url).pathname;
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.webmanifest': 'application/manifest+json' };
@@ -60,6 +61,12 @@ http.createServer(async (req, res) => {
   if (url.pathname === '/api/draw') {
     const chunks = []; for await (const c of req) chunks.push(c);
     const r = await draw(new Request('http://x/api/draw', { method: req.method, headers: req.headers, body: ['GET', 'HEAD'].includes(req.method) ? undefined : Buffer.concat(chunks) }));
+    res.writeHead(r.status, Object.fromEntries(r.headers)); return res.end(await r.text());
+  }
+  if (url.pathname === '/api/upload') {
+    if (process.env.NO_UPLOAD_FN) { res.writeHead(404); return res.end('not found'); }
+    const chunks = []; for await (const c of req) chunks.push(c);
+    const r = await upload(new Request('http://x/api/upload', { method: req.method, headers: req.headers, body: Buffer.concat(chunks) }));
     res.writeHead(r.status, Object.fromEntries(r.headers)); return res.end(await r.text());
   }
   if (url.pathname === '/api/card' || url.pathname === '/api/players' || url.pathname.startsWith('/api/players/')) {

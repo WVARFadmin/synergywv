@@ -494,3 +494,22 @@ Nita's friend Mike (with Claude) built a live leaderboard, a projector page with
 - **Photo delete:** `DELETE /api/photo/:id` (staff), plus a Delete button with a confirm on `/photos`.
 - **Staff player editing:** new `/players` page (`public/players.html`) and `players` function. Staff can list all cards with email, flag possible duplicate names, Edit name/org, Remove from board / Put back, and Delete for good. Edits are stored as `entry.edit` and removal as `entry.removed`; both survive later updates. `eligible()` skips removed cards and `loadEntries()` applies `withEdits()`. The projector's `?staff` panel links to /players and /photos. `/players` is in the SW denylist, globIgnores and netlify.toml (redirect + noindex).
 - **dev-server.mjs:** routes `/api/card`, `/api/players[/:id]`, `/players`, and DELETE for photos; `SKIP_FORM_HOOK` env.
+
+## 22. Challenge hour banner (Oct 14, 2026)
+
+- New `src/components/ChallengeLiveBanner.jsx`: a bold gold banner at the top of every screen except the Challenge itself, from `CHALLENGE.opens` (Thu 11:30) until `CHALLENGE.closes` (12:40). "Open my card" goes to the Challenge. From 12:20 it switches to "Last call: Turn in your Challenge card by 12:40". × hides it for that visit; it's not shown on the `?challenge-staff` view.
+- While it shows, the plain notification banner is hidden, so only one banner is on screen (other notices stay in the bell list). The challenge-start notification now releases at 11:30 (was 11:28).
+
+## 23. Share photos page with photo release (Oct 14, 2026)
+
+- **Camera button** at the top left of the header on phones (replacing the old menu spot) opens the new **Share photos** page (`tab 'photos'`, `src/screens/PhotosScreen.jsx`). On computers it's "Photos" in the sidebar (TabBar `tb-wide-only`); the header button is hidden there.
+- **Share photos page:** name (required), email (optional), caption, and a **photo release** (`PHOTO_RELEASE` in PhotosScreen.jsx; WVARF may want it reviewed). The agree checkbox must be ticked before Take photo / Upload from my phone work. Up to 10 photos at a time; the phone keeps small previews of the last 12 with Sent / Try again.
+- **Uploads:** new `src/data/photoUpload.js` (shared `shrink()` + `uploadPhoto()`), used by both the Challenge and Share photos. It POSTs to the new function `/api/upload` (`netlify/functions/upload.mjs`), which saves straight to Blobs and so isn't affected by Netlify's spam filter. If that returns 404 (drag-and-drop deploy), it falls back to Forms (`challenge-photo` / new `conference-photo` form; `submission-created` handles both).
+- **Challenge photo squares** now say **Take photo** (camera only via `capture`; the badge-twin selfie opens the front camera).
+- **Staff /photos:** a "Show" filter (All / Shared photos / Challenge photos), tags for type and release, and zip names that follow the filter.
+- dev-server.mjs routes `/api/upload`; `NO_UPLOAD_FN=1` imitates a deploy without functions.
+
+## 24. Materials from the "correct version" checklist (Oct 15, 2026)
+
+- New links were added in `materials.js`: Travis Kline (w6c Hiring Solutions; t3c Leveraging Job Negotiation), Morgan Hassig (t3a Cash Is King), and Zach Sandy (t6a Beyond Cleaning; two links from one cell, "Material 1 of 2 / 2 of 2"). There are now 10 links.
+- **Heads-up:** that checklist was sorted A–Z by columns A–H only, so the Link to Materials column didn't move. The five older links now sit beside the wrong names (David Mitchell's link is beside Adam Mouse, Alyce Almond's beside Aimee White, Mark Fox's beside Dathum Cummings, Michael Yon's two beside Jamie Childers and Jason Roberts). They were kept with their original presenters. The new links were taken as placed. Nita said to use the new upload; confirm if any looks wrong.
