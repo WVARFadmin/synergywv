@@ -31,7 +31,7 @@ export function OrgCard({ org, expanded = false, onToggle }) {
         </span>
         <span className="who">
           <span className="name">{org.name}</span>
-          <span className="org">Sponsor organization</span>
+          <span className="org">{org.donor ? 'Sponsor' : 'Sponsor organization'}</span>
         </span>
         <span className="badges">
           <span className={`p-badge ${tier ? `tier-badge tier-${tier.key}` : 'sponsor'}`}>

@@ -513,3 +513,20 @@ Nita's friend Mike (with Claude) built a live leaderboard, a projector page with
 
 - New links were added in `materials.js`: Travis Kline (w6c Hiring Solutions; t3c Leveraging Job Negotiation), Morgan Hassig (t3a Cash Is King), and Zach Sandy (t6a Beyond Cleaning; two links from one cell, "Material 1 of 2 / 2 of 2"). There are now 10 links.
 - **Heads-up:** that checklist was sorted A–Z by columns A–H only, so the Link to Materials column didn't move. The five older links now sit beside the wrong names (David Mitchell's link is beside Adam Mouse, Alyce Almond's beside Aimee White, Mark Fox's beside Dathum Cummings, Michael Yon's two beside Jamie Childers and Jason Roberts). They were kept with their original presenters. The new links were taken as placed. Nita said to use the new upload; confirm if any looks wrong.
+- **Update:** Nita re-sorted the checklist so the links line up again. All 10 links in `materials.js` match their presenter rows in that sheet, so nothing needed to move.
+
+## 25. Oct 18: new material links + full sponsor list
+
+- **Materials:** Nita's latest checklist added 7 Adobe links: t6c Misty Mayville (Apprenticeship Visual + Benefits handout), w6a Aimee White, w8b Morgan Robinson (presentation + worksheet), t2 Tina Cobb, and rj1 Andrea Higginbotham (Janitorial Supervisor Training). For the two-link cells, the first link was confirmed in Adobe as the deck. There are 17 links in total. The originals and PDF copies of these files are also in Central Staff › Awards Banquet & Conference Planning › 2026 › Curriculum › Presenter Materials.
+- **Sponsors** now match the Oct 16 foam boards, in board order:
+  - Title: The Hassig Family (heart)
+  - Community Partner: The Greater Kanawha Valley Foundation (logo gkvf.webp, from Central Staff)
+  - Diamond: Wilson Legal Group, PLLC (wilson-legal-group.webp) and The Pazos Family (heart)
+  - Gold: Integrated Resources
+  - Silver: Frank & Bevin Weber
+  - Bronze: WVABLE, Morgan Hassig & Holly Smith, and Tina Cobb (WVARF mark)
+  - Gemstone: Homestead, Nita Shippy, Jim Hash (WVARF mark) and Lisa Pellino (heart)
+  - Awards Night Reception: BUWAC
+- **New tiers** in TierMark.jsx: Title (Crown), Community Partner (Handshake) and Diamond (Diamond). They render as navy ribbons/badges with yellow text, using `--tier-text`.
+- **OrgCard:** individual and family donors read "Sponsor", not "Sponsor organization".
+- **Open questions for Nita:** the tier blurbs for the new sponsors were copied from existing sponsors, and BUWAC is still labeled "Awards Night Reception Sponsor".
