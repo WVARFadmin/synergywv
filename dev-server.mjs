@@ -78,7 +78,7 @@ http.createServer(async (req, res) => {
     res.writeHead(r.status, Object.fromEntries(r.headers)); return res.end(await r.text());
   }
   if (url.pathname === '/api/leaderboard') {
-    const r = await lb();
+    const r = await lb(new Request('http://x' + req.url, { headers: req.headers }));
     res.writeHead(r.status, Object.fromEntries(r.headers)); return res.end(await r.text());
   }
   let p = url.pathname === '/' ? '/index.html' : url.pathname === '/leaderboard' ? '/leaderboard.html' : url.pathname === '/photos' ? '/photos.html' : url.pathname === '/players' ? '/players.html' : url.pathname;

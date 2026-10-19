@@ -3,10 +3,19 @@
 // winner's full name once staff draw one). Netlify's CDN caches the answer
 // for a few seconds, so a room full of phones polling it costs very little.
 import { getStore } from '@netlify/blobs';
-import { DRAW_STORE, boardSettings, loadEntries, publicWinner, rank } from '../lib/challenge.mjs';
+import { BOARD_REVEAL, DRAW_STORE, boardSettings, env, loadEntries, publicWinner, rank } from '../lib/challenge.mjs';
+import { checkStaff } from '../lib/photos.mjs';
 
-export default async () => {
+export default async (req) => {
   try {
+    // Hidden until 2 minutes before the Challenge starts, except for staff
+    // (x-staff-key). LEADERBOARD_OPEN=1 in Netlify opens it early.
+    const early = Date.now() < Date.parse(BOARD_REVEAL) && !env('LEADERBOARD_OPEN');
+    const staff = early && req.headers.get('x-staff-key') && checkStaff(req).ok;
+    if (early && !staff) {
+      return Response.json({ locked: true, opensAt: BOARD_REVEAL, updated: new Date().toISOString(), players: 0, tickets: 0, rows: [], winner: null },
+        { headers: { 'Cache-Control': 'no-store' } });
+    }
     const settings = boardSettings();
     const [entries, drawn] = await Promise.all([
       loadEntries(),
@@ -23,7 +32,7 @@ export default async () => {
         winner: publicWinner(drawn, settings.testMode),
       },
       {
-        headers: {
+        headers: staff ? { 'Cache-Control': 'no-store' } : {
           'Cache-Control': 'public, max-age=0, must-revalidate',
           'Netlify-CDN-Cache-Control': 'public, s-maxage=5, stale-while-revalidate=10',
         },

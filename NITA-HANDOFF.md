@@ -112,6 +112,7 @@ Go to **Project configuration → Environment variables → Add a variable**. Yo
 |---|---|---|---|
 | `STAFF_KEY` | **Yes** | A password you choose, e.g. `Synergy-Staff-2026`. Share it only with staff. | Unlocks the photo gallery (`/photos`) and the drawing controls (`/leaderboard?staff`). |
 | `LEADERBOARD_SINCE` | No; leave unset | A date/time such as `2026-10-22T00:00:00-04:00` | Overrides the automatic test mode (see Part 6). Normally leave it unset. |
+| `LEADERBOARD_OPEN` | No; leave unset | `1` | Opens the public leaderboard before 11:28 AM Thursday, for testing only. Delete it before the event. |
 | `LEADERBOARD_HIDE` | No | Emails or full names, separated by commas, e.g. `test@wvarf.org, Jane Doe` | Removes those players from the leaderboard and the drawing, e.g. staff test accounts or an inappropriate name. |
 
 **After adding or changing any variable, redeploy:** Deploys → Trigger deploy → Deploy project. Functions only see new values after a deploy.
@@ -144,19 +145,24 @@ Replace `YOURSITE` below with the site's address, e.g. `wvarf-synergy.netlify.ap
 
 ## Part 6: Test it before the event
 
-Until **October 22**, the leaderboard runs in **test mode**:
+**The Challenge is hidden until 11:28 AM Thursday, Oct 22** (2 minutes before it starts). Before then, attendees see only the time and place: no squares, no questions, no leaderboard. Staff test it with the hidden links:
+- **App:** open `https://YOURSITE/?challenge-preview`. That phone keeps the preview on (the page says "Staff preview"). `?challenge-preview=off` turns it off again.
+- **Leaderboard:** open `https://YOURSITE/leaderboard?staff` and enter the staff key. The plain `/leaderboard` and the leaderboard panel inside the app say "opens at 11:28 AM" until then.
+- To open the public leaderboard early for a full test (for example, to check the winner shows on phones), add `LEADERBOARD_OPEN` = `1` in Netlify's environment variables and redeploy. **Delete it again before the event.**
+
+Until **11:28 AM on October 22**, the leaderboard runs in **test mode**:
 - It shows every card, with a "Test mode" label.
 - Drawings are labelled **"Test drawing"**.
 
-On **Oct 22 at midnight Eastern**, test cards and test drawings drop off the board and out of the drawing automatically. You don't need to change any settings. Test entries still sit in Forms, though, so delete them there (see the end of this part).
+At **11:28 AM Eastern on Oct 22**, test cards and test drawings drop off the board and out of the drawing automatically, including any staff test cards made that morning. You don't need to change any settings. Test entries still sit in Forms, though, so delete them there (see the end of this part).
 
 1. **Turn in a card on a phone:**
-   1. Open the app and go to **Challenge**.
+   1. Open the app with `?challenge-preview` at the end of the address and go to **Challenge** (Home card or the Agenda session).
    2. Enter a name.
    3. Complete one square, e.g. **Visit WVABLE** with code word **ABLE**.
    4. Tap **Turn in my card**.
 
-   Within about 15 seconds you appear on the leaderboard: the phone panel and `/leaderboard`. The button turns grey until your name is filled in **and** at least one square is complete; a hint explains this.
+   Within about 15 seconds you appear on `/leaderboard?staff` (after you enter the staff key). The phone panel and plain `/leaderboard` stay locked until 11:28 AM Thursday unless `LEADERBOARD_OPEN` is set. The button turns grey until your name is filled in **and** at least one square is complete; a hint explains this.
 
    *Code words:* WVABLE = **ABLE**, Down Syndrome Network = **TOGETHER**. Every other required answer needs at least 2 characters, and the session dropdowns must be picked.
 2. **Update a score:** complete another square, then tap **Update my card**, or **Update my score** in the leaderboard panel. The board updates.
@@ -173,6 +179,8 @@ On **Oct 22 at midnight Eastern**, test cards and test drawings drop off the boa
 ---
 
 ## Part 7: Event day (Thursday, Oct 22)
+
+**11:28 AM:** the Challenge card and leaderboard unlock for everyone automatically. Phones with the app open pick it up within 30 seconds.
 
 **11:30 AM – 12:40 PM: Challenge open**
 - **Projector:** open `https://YOURSITE/leaderboard` on the room screen and press **F11** for full screen. It refreshes every 10 seconds and counts down to the 12:40 close.
@@ -193,6 +201,24 @@ On **Oct 22 at midnight Eastern**, test cards and test drawings drop off the boa
 
 ---
 
+## Hidden staff links (all of them)
+
+Replace YOURSITE with the Netlify address. None of these are linked anywhere attendees can see.
+
+| Link | What it does | Needs the staff key? |
+|---|---|---|
+| `/leaderboard?staff` | Projector leaderboard plus the drawing panel (Draw winner, Draw again, Clear winner). Before 11:28 AM Thursday it is the only way to see the board. | Yes |
+| `/players` | Fix names or organizations, remove duplicates, restore, delete for good. | Yes |
+| `/photos` | See, filter, download (one or all as .zip) and delete Challenge and shared photos. | Yes |
+| `/?challenge-preview` | Shows the Challenge card before 11:28 AM Thursday. The phone remembers it; `/?challenge-preview=off` turns it off. | No |
+| `/?challenge-staff` | Backup drawing from a Netlify Forms CSV. | No |
+| `/?preview-surveys` | Opens every feedback survey early, to test them. Answers sent this way are real submissions, so delete them in Netlify Forms afterwards. | No |
+| `/?preview-notifications` | Shows every scheduled notification now, to check the wording. | No |
+
+Session surveys open on their own when each session starts; the conference survey opens Thursday at 8:00 AM. Answers go to Netlify **Forms → session-feedback** and **conference-feedback**.
+
+---
+
 ## Part 8: Troubleshooting
 
 These are all problems we actually hit while testing.
@@ -203,7 +229,8 @@ These are all problems we actually hit while testing.
 | Button stuck on "Sending…" | Fixed. The app now gives up after 15 seconds, keeps the card on the phone and resends it later. Netlify usually *did* receive it. |
 | Score only updated the first time | Fixed Oct 14. Netlify only runs `submission-created` for submissions its spam filter accepts, and repeat cards from one person can be held back as spam (check Forms → challenge-entry → **Spam submissions**). The app now also sends each card straight to the board through `/api/card`. |
 | Duplicate player on the board | Open `/players`, **Remove from board** on the extra card. Use **Edit** to fix a misspelled name or organization. |
-| Leaderboard empty | Before Oct 22 it shows test cards. After Oct 22 only cards from that day count. If `LEADERBOARD_SINCE` is set, check its date. |
+| Leaderboard says "opens at 11:28 AM" | That's on purpose: it is hidden until 2 minutes before the Challenge. Use `/leaderboard?staff` with the staff key, or set `LEADERBOARD_OPEN` = `1` for testing. |
+| Leaderboard empty | Before 11:28 AM Oct 22 it shows test cards (staff view). After that only cards turned in from 11:28 AM that day count. If `LEADERBOARD_SINCE` is set, check its date. |
 | Leaderboard missing on a phone | The summary sits under "How to play" and the full board at the bottom. Fully close and reopen the app after a deploy. A home-screen app can take two openings to update. |
 | Photo links in Netlify's Forms page won't open | Seen on Mike's network in every browser. Use `/photos` instead: it serves the photos from your own site. |
 | `/photos` or the drawing says "STAFF_KEY is not set" | Add `STAFF_KEY` (Part 4), then **redeploy**. |
@@ -275,7 +302,7 @@ All use Netlify Blobs; none need an API token.
 | `photos` | `GET /api/photos` | Staff only. Lists photos with their metadata. |
 | `photo` | `GET/DELETE /api/photo/:id` | Staff only. Returns one photo's image, or deletes it. |
 
-**Test mode:** `boardSettings()` in `netlify/lib/challenge.mjs` decides it. Before `2026-10-22T00:00:00-04:00`, every card counts. From that time on, only cards from that day count. `LEADERBOARD_SINCE` overrides both.
+**Test mode:** `boardSettings()` in `netlify/lib/challenge.mjs` decides it. Before `2026-10-22T11:28:00-04:00`, every card counts. From that time on, only cards turned in from then count. `LEADERBOARD_SINCE` overrides both.
 
 ### Testing locally
 

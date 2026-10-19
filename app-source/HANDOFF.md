@@ -530,3 +530,13 @@ Nita's friend Mike (with Claude) built a live leaderboard, a projector page with
 - **New tiers** in TierMark.jsx: Title (Crown), Community Partner (Handshake) and Diamond (Diamond). They render as navy ribbons/badges with yellow text, using `--tier-text`.
 - **OrgCard:** individual and family donors read "Sponsor", not "Sponsor organization".
 - **Open questions for Nita:** the tier blurbs for the new sponsors were copied from existing sponsors, and BUWAC is still labeled "Awards Night Reception Sponsor".
+- Oct 18: BUWAC (reception sponsor) moved to second place, right after the Title sponsor, everywhere sponsors are listed.
+
+## 26. Oct 18: speakers, meal rooms, Challenge lock
+
+- **People:** rj1 (Remote Janitorial Training) speakers are Andrea Higginbotham, Misty Mayville and Gary Wolfe (WVARF). Myriah Snider is now **Myriah Jenkins**, Vocational Programs Director, The Arc of Harrison County (p24), with her bio (from her "BIO for Lions Club" doc; contact details left out) and headshot. Angie Reed and Jamie Childers have headshots cropped from photos Nita sent. All three are self-hosted in `public/headshots/`.
+- **Rooms (from Nita):** both lunches are "Buffet Lunch" in Stillwaters Restaurant; both breakfasts in the Terrace Foyer; the Wednesday break is "Snack Break" (no break sponsor); the Challenge is in the Terrace Foyer. The banquet is split into two agenda items: w9r Awards Night Reception & Cocktail Hour, 5:30 PM, Ballroom Foyer, and w9 Awards Banquet, 6:30 PM, Ballroom II. ROOMS (Venue) and the banquet/Challenge notifications match. Stillwaters' location isn't given, since it isn't on the published plan.
+- **People tab:** every card is the old speaker size (60px picture, 84px row); org logos are 60px. The Community Partner badge reads "Partner" on closed cards so the name doesn't wrap into a tall card.
+- **Challenge lock:** `src/data/challengeGate.js`. Before 11:28 AM Thu (2 min before `CHALLENGE.opens`) the Challenge screen and Home card show only time/place; the in-app leaderboard panel (`public/live/leaderboard.js`) stays out. `?challenge-preview` (remembered in localStorage; `=off` clears it) and `?challenge-staff` bypass it. `/api/leaderboard` returns `{locked:true}` before `BOARD_REVEAL` unless the `x-staff-key` header is valid or `LEADERBOARD_OPEN` is set; `/leaderboard?staff` sends the key. `DEFAULT_SINCE` moved to 11:28 AM Oct 22 so staff test cards made that morning don't count.
+- dev-server.mjs now passes the request to the leaderboard function.
+

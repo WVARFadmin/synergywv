@@ -115,7 +115,7 @@
 
 <footer>
   <span>Play in the conference app: open the <b>Challenge</b>, fill squares, and tap <b>Turn in my card</b>.</span>
-  <span id="test" hidden>Test mode · clears automatically on Oct 22</span>
+  <span id="test" hidden>Test mode · clears automatically at 11:28 AM Oct 22</span>
   <span id="site"></span>
 </footer>
 
@@ -175,9 +175,16 @@
   let firstLoad = true;
   async function load() {
     try {
-      const res = await fetch('/api/leaderboard', { cache: 'no-store', headers: { Accept: 'application/json' } });
+      const res = await fetch('/api/leaderboard', { cache: 'no-store', headers: staffKey ? { Accept: 'application/json', 'x-staff-key': staffKey } : { Accept: 'application/json' } });
       if (!res.ok || !(res.headers.get('content-type') || '').includes('json')) throw new Error(res.status);
       const d = await res.json();
+      if (d.locked) {
+        $('players').textContent = '–'; $('tickets').textContent = '–';
+        $('updated').textContent = 'Opens 11:28 AM Thursday';
+        $('board').innerHTML = '<p class="empty">The leaderboard opens Thursday at 11:28 AM, just before the Challenge starts.</p>';
+        if (STAFF && staffKey) msg('The public board is still locked. If you expected to see it, check the staff key.', true);
+        return;
+      }
       $('test').hidden = !d.testMode;
       $('players').textContent = d.players;
       $('tickets').textContent = d.tickets;
@@ -304,7 +311,7 @@
       e.preventDefault();
       staffKey = $('staffKey').value.trim();
       try { sessionStorage.setItem(KEY, staffKey); } catch {}
-      $('staffLogin').hidden = true; $('staffTools').hidden = false; msg('Unlocked.');
+      $('staffLogin').hidden = true; $('staffTools').hidden = false; msg('Unlocked.'); load();
     });
     $('drawBtn').addEventListener('click', () => draw(false));
     $('againBtn').addEventListener('click', () => draw(true));

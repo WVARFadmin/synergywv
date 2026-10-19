@@ -13,7 +13,11 @@ export const MAX_TICKETS = MAX_SQUARES + MAX_LINES * 2 + 5;
 
 // Entries before this are treated as tests and left off the board.
 // Override with the LEADERBOARD_SINCE environment variable.
-export const DEFAULT_SINCE = '2026-10-22T00:00:00-04:00';
+// Cards count from 11:28 AM Thursday, when the card unlocks for everyone, so
+// staff test cards made that morning (with ?challenge-preview) don't count.
+export const DEFAULT_SINCE = '2026-10-22T11:28:00-04:00';
+// Before this, /api/leaderboard is locked to the public (staff key only).
+export const BOARD_REVEAL = '2026-10-22T11:28:00-04:00';
 
 export function env(name) {
   return globalThis.Netlify?.env?.get(name) ?? process.env[name];
@@ -116,7 +120,7 @@ export function rank(entries, opts = {}) {
 }
 
 // Before the Challenge day the board runs in test mode and counts every card;
-// on Oct 22 test cards drop off automatically. LEADERBOARD_SINCE overrides.
+// at 11:28 AM Oct 22 test cards drop off automatically. LEADERBOARD_SINCE overrides.
 export function boardSettings(now = Date.now()) {
   const configured = env('LEADERBOARD_SINCE');
   const testMode = !configured && now < Date.parse(DEFAULT_SINCE);

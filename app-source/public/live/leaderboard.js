@@ -51,7 +51,8 @@
   const host = () => {
     const c = document.querySelector('.ch-content');
     // Staff view (?challenge-staff) has its own tools; leave it alone.
-    return c && !c.querySelector('.ch-staff') ? c : null;
+    // Locked view (before 11:28 AM Thursday) shows no leaderboard either.
+    return c && !c.querySelector('.ch-staff') && !c.querySelector('.ch-locked') ? c : null;
   };
   const localTickets = () => {
     const n = parseInt(document.querySelector('.ch-tickets-n')?.textContent, 10);
@@ -113,6 +114,7 @@
     if (!mini) return;
     let body;
     if (!data) body = `<span class="ch-mini-empty">${error ? 'Leaderboard offline' : 'Loading leaderboard…'}</span>`;
+    else if (data.locked) body = '<span class="ch-mini-empty">Leaderboard opens at 11:28 AM Thursday.</span>';
     else if (!rows.length) body = '<span class="ch-mini-empty">No cards turned in yet. Be first!</span>';
     else body = `<ol class="ch-mini-top">${rows.slice(0, 3).map(r => `<li${r.id === myId ? ' class="is-me"' : ''}><span class="ch-mini-rank">${r.rank}</span> ${esc(r.name)} <b>${r.tickets}</b></li>`).join('')}</ol>`;
     mini.innerHTML = `
@@ -136,6 +138,8 @@
       body = `<p class="ch-live-empty">The leaderboard can’t load right now. Your card is still saved on your phone.</p>`;
     } else if (!data) {
       body = `<p class="ch-live-empty">Loading…</p>`;
+    } else if (data.locked) {
+      body = `<p class="ch-live-empty">The leaderboard opens at 11:28 AM Thursday, just before the Challenge starts.</p>`;
     } else if (!rows.length) {
       body = `<p class="ch-live-empty">No cards turned in yet. Fill a square and tap <b>Turn in my card</b> to be first on the board.</p>`;
     } else {
