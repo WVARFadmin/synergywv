@@ -1,0 +1,331 @@
+/* ============================================================
+   WVARF / Statewide Synergy — Colors & Type
+   Brand colors sampled from the WVARF primary logo:
+   navy #11308A, gold #FBDB73.
+   Type scale tuned for WCAG 2.2 AA.
+   ============================================================ */
+
+/* ---------- Fonts ----------
+   Archivo — a tight grotesque that echoes the WVARF wordmark; used for
+   display and headings. Source Sans 3 — highly legible at small sizes;
+   used for body copy. Both self-hosted, so the app works offline.
+*/
+
+@font-face {
+  font-family: 'Archivo';
+  src: url('/fonts/archivo-latin-600-normal.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Archivo';
+  src: url('/fonts/archivo-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  src: url('/fonts/source-sans-3-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  src: url('/fonts/source-sans-3-latin-400-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  src: url('/fonts/source-sans-3-latin-600-normal.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  src: url('/fonts/source-sans-3-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Brand palette — sampled from the WVARF logo.
+     --wv-navy and --wv-gold are the two logo colors; everything else is a
+     tint or shade derived from them. */
+  --wv-navy: #11308A;
+  --wv-navy-deep: #0A1E57;
+  --wv-navy-mid: #2A4CA8;
+  --wv-navy-soft: #DEE5F5;
+
+  --wv-gold: #FBDB73;
+  --wv-gold-deep: #8A6508;   /* AA text on gold tints */
+  --wv-gold-mid: #E3B534;
+  --wv-gold-soft: #FEF6DF;
+
+  /* A supporting accent for "now"/alert states — a warm red-orange that
+     reads clearly against both navy and the warm neutrals. */
+  --wv-ember: #C0481C;
+  --wv-ember-deep: #93360F;
+  --wv-ember-soft: #FBE3D6;
+
+  --wv-white: #FFFFFF;
+  --wv-off-white: #FBFAF7;
+
+  /* Slightly cool-warm neutral scale, tuned to sit under navy */
+  --neutral-0:   #FFFFFF;
+  --neutral-50:  #F9F8F5;
+  --neutral-100: #F0EFEA;
+  --neutral-200: #E2E1DA;
+  --neutral-300: #C8C7BE;
+  --neutral-400: #A2A199;
+  --neutral-500: #73726B;
+  --neutral-600: #51504A;
+  --neutral-700: #383732;
+  --neutral-800: #24231F;
+  --neutral-900: #141310;
+
+  /* Semantic foreground / background / border */
+  --fg-1: var(--neutral-900);
+  --fg-2: var(--neutral-700);
+  --fg-3: var(--neutral-500);
+  --fg-on-brand: #FFFFFF;
+  --fg-link: var(--wv-navy);
+  --fg-link-hover: var(--wv-navy-deep);
+
+  --bg-1: var(--wv-off-white);
+  --bg-2: #FFFFFF;
+  --bg-3: var(--neutral-100);
+  --bg-brand: var(--wv-navy);
+  --bg-brand-soft: var(--wv-navy-soft);
+
+  --border-1: var(--neutral-200);
+  --border-2: var(--neutral-300);
+  --border-focus: var(--wv-gold-mid);
+
+  /* State colors */
+  --success:    #2F7D3F;
+  --success-bg: #E2F1E4;
+  --warning:    var(--wv-gold-deep);
+  --warning-bg: var(--wv-gold-soft);
+  --danger:     #A8291F;
+  --danger-bg:  #F7DCD9;
+  --info:       var(--wv-navy);
+  --info-bg:    var(--wv-navy-soft);
+
+  /* Typography */
+  --font-sans: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Archivo', 'Source Sans 3', -apple-system, system-ui, sans-serif;
+  --font-num: 'Source Sans 3', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --fs-12: 0.75rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-18: 1.125rem;
+  --fs-20: 1.25rem;
+  --fs-24: 1.5rem;
+  --fs-30: 1.875rem;
+  --fs-36: 2.25rem;
+  --fs-48: 3rem;
+  --fs-60: 3.75rem;
+
+  --fw-regular: 400;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  --lh-tight: 1.15;
+  --lh-snug: 1.3;
+  --lh-normal: 1.5;
+  --lh-relaxed: 1.65;
+
+  --ls-tight: -0.015em;
+  --ls-normal: 0;
+  --ls-wide: 0.04em;
+
+  /* Spacing — 4px base */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --sp-20: 80px;
+  --sp-24: 96px;
+
+  /* Radii */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-pill: 9999px;
+
+  /* Shadows — navy-tinted, never pure black */
+  --shadow-xs: 0 1px 2px rgba(10, 30, 87, 0.06);
+  --shadow-sm: 0 2px 4px rgba(10, 30, 87, 0.08), 0 1px 2px rgba(10, 30, 87, 0.06);
+  --shadow-md: 0 6px 16px rgba(10, 30, 87, 0.10), 0 2px 4px rgba(10, 30, 87, 0.06);
+  --shadow-lg: 0 16px 36px rgba(10, 30, 87, 0.14), 0 4px 8px rgba(10, 30, 87, 0.08);
+  --shadow-inset: inset 0 1px 2px rgba(10, 30, 87, 0.08);
+
+  --focus-ring: 0 0 0 3px rgba(227, 181, 52, 0.55), 0 0 0 1px var(--wv-navy-deep);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.2, 1);
+  --dur-fast: 140ms;
+  --dur-base: 220ms;
+  --dur-slow: 360ms;
+
+  /* Layout */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1200px;
+
+  --hit-target: 44px;
+}
+
+/* ============================================================
+   SEMANTIC TYPE STYLES
+   ============================================================ */
+
+.t-display {
+  font-family: var(--font-display);
+  font-size: var(--fs-60);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  color: var(--fg-1);
+}
+.t-h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-48);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  color: var(--fg-1);
+}
+.t-h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-36);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-tight);
+  color: var(--fg-1);
+}
+.t-h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-30);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+}
+.t-h4 {
+  font-family: var(--font-display);
+  font-size: var(--fs-24);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+}
+.t-title {
+  font-family: var(--font-sans);
+  font-size: var(--fs-20);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+}
+.t-body-lg {
+  font-family: var(--font-sans);
+  font-size: var(--fs-18);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-1);
+}
+.t-body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-16);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+  color: var(--fg-1);
+}
+.t-body-sm {
+  font-family: var(--font-sans);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+  color: var(--fg-2);
+}
+.t-meta {
+  font-family: var(--font-sans);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+  color: var(--fg-3);
+}
+.t-eyebrow {
+  font-family: var(--font-display);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-normal);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--wv-navy);
+}
+.t-num {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--fw-semibold);
+}
+
+/* ============================================================
+   GLOBAL RESETS & BASE
+   ============================================================ */
+
+html {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--fg-1);
+  background: var(--bg-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body { margin: 0; line-height: var(--lh-normal); }
+
+h1 { font: var(--fw-bold) var(--fs-48)/var(--lh-tight) var(--font-display); letter-spacing: var(--ls-tight); margin: 0; }
+h2 { font: var(--fw-bold) var(--fs-36)/var(--lh-snug) var(--font-display); letter-spacing: var(--ls-tight); margin: 0; }
+h3 { font: var(--fw-semibold) var(--fs-30)/var(--lh-snug) var(--font-display); margin: 0; }
+h4 { font: var(--fw-semibold) var(--fs-24)/var(--lh-snug) var(--font-display); margin: 0; }
+p  { font-size: var(--fs-16); line-height: var(--lh-normal); margin: 0; text-wrap: pretty; }
+
+a {
+  color: var(--fg-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1.5px;
+}
+a:hover { color: var(--fg-link-hover); text-decoration-thickness: 2px; }
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--r-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

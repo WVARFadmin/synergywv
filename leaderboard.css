@@ -1,0 +1,102 @@
+/* Live leaderboard panel on the in-app Challenge screen. Uses the app's
+   WVARF tokens, with fallbacks so it still looks right on its own. */
+.ch-live {
+  margin-top: 20px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid var(--border-1, #D9DEE8);
+  border-top: 4px solid var(--wv-gold, #FBDB73);
+  border-radius: var(--r-lg, 14px);
+  scroll-margin-top: 84px;
+}
+.ch-live-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ch-live-head h3 {
+  margin: 0;
+  font-family: var(--font-display, 'Archivo', sans-serif);
+  font-size: var(--fs-20, 20px);
+  color: var(--wv-navy, #11308A);
+}
+.ch-live-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 10px; border-radius: 999px;
+  background: var(--success-bg, #E2F1E4); color: #23612F;
+  font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+}
+.ch-live-badge > span { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: ch-live-pulse 1.6s ease-in-out infinite; }
+.ch-live-badge.is-off { background: var(--neutral-100, #EEF0F4); color: var(--neutral-600, #4A5468); }
+.ch-live-badge.is-off > span { animation: none; }
+@keyframes ch-live-pulse { 50% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .ch-live-badge > span { animation: none; } }
+.ch-live-meta { margin: 6px 0 12px; font-size: 14px; color: var(--fg-2, #4A5468); min-height: 1em; }
+.ch-live-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.ch-live-list li {
+  display: grid; grid-template-columns: 36px 1fr auto; align-items: center; gap: 10px;
+  min-height: 52px; padding: 6px 12px 6px 8px;
+  border-radius: var(--r-md, 10px);
+  background: var(--bg-2, #F5F6F9);
+}
+.ch-live-list li.top { background: var(--wv-gold-soft, #FEF6DF); }
+.ch-live-list li.is-me { outline: 2px solid var(--wv-navy, #11308A); outline-offset: -2px; background: var(--wv-navy-soft, #DEE5F5); }
+.ch-live-rank {
+  display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%;
+  background: #fff; color: var(--wv-navy, #11308A);
+  font-family: var(--font-display, 'Archivo', sans-serif); font-weight: 700; font-size: 16px;
+  border: 1px solid var(--border-1, #D9DEE8);
+}
+.ch-live-list li.top-1 .ch-live-rank { background: var(--wv-gold, #FBDB73); border-color: var(--wv-gold-mid, #E3B534); }
+.ch-live-list li.top-2 .ch-live-rank { background: #E7EAEF; border-color: #99A3B4; }
+.ch-live-list li.top-3 .ch-live-rank { background: #F3DFCD; border-color: #BE7F49; }
+.ch-live-who { display: grid; min-width: 0; }
+.ch-live-who b { font-size: 16px; color: var(--fg-1, #1B2333); overflow-wrap: anywhere; }
+.ch-live-who > span { font-size: 14px; color: var(--fg-2, #4A5468); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ch-live-you-tag {
+  display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px;
+  background: var(--wv-navy, #11308A); color: #fff; font-size: 12px; font-weight: 700; vertical-align: 2px;
+}
+.ch-live-tix { text-align: right; font-size: 13px; color: var(--fg-2, #4A5468); white-space: nowrap; }
+.ch-live-tix b { display: block; font-family: var(--font-display, 'Archivo', sans-serif); font-size: 20px; line-height: 1.1; color: var(--wv-navy, #11308A); }
+.ch-live-me { margin: 10px 0 0; font-weight: 600; color: var(--wv-navy, #11308A); }
+.ch-live-empty { margin: 0; padding: 14px; border-radius: var(--r-md, 10px); background: var(--bg-2, #F5F6F9); color: var(--fg-2, #4A5468); }
+.ch-live-nudge {
+  margin: 0 0 12px; padding: 12px; border-radius: var(--r-md, 10px);
+  background: var(--wv-gold-soft, #FEF6DF); border: 1px solid var(--wv-gold-mid, #E3B534);
+  color: var(--fg-1, #1B2333); display: grid; gap: 10px;
+}
+p.ch-live-nudge { display: block; }
+.ch-live-nudge p { margin: 0; }
+.ch-live-nudge .ch-btn { justify-self: start; }
+.ch-live-note { margin: 12px 0 0; font-size: 13px; color: var(--fg-2, #4A5468); }
+
+.ch-live-test {
+  margin: 0 0 12px; padding: 8px 12px; border-radius: var(--r-md, 10px);
+  background: var(--wv-navy-soft, #DEE5F5); color: var(--wv-navy-deep, #0A1E57); font-size: 14px;
+}
+
+/* Compact summary near the top of the Challenge screen */
+.ch-live-mini {
+  margin-top: 12px; padding: 10px 14px;
+  background: #fff; border: 1px solid var(--border-1, #D9DEE8);
+  border-left: 4px solid var(--wv-gold, #FBDB73);
+  border-radius: var(--r-lg, 14px);
+}
+.ch-mini-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.ch-mini-title { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-display, 'Archivo', sans-serif); font-weight: 700; color: var(--wv-navy, #11308A); font-size: 16px; }
+.ch-mini-dot { width: 8px; height: 8px; border-radius: 50%; background: #23612F; animation: ch-live-pulse 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .ch-mini-dot { animation: none; } }
+.ch-mini-test { font-family: var(--font-sans, 'Source Sans 3', sans-serif); font-size: 12px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: var(--wv-navy-soft, #DEE5F5); color: var(--wv-navy-deep, #0A1E57); }
+.ch-mini-link { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; color: var(--wv-navy, #11308A); text-decoration: underline; text-underline-offset: 2px; }
+.ch-mini-top { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 15px; color: var(--fg-1, #1B2333); }
+.ch-mini-top li { display: inline-flex; align-items: center; gap: 6px; }
+.ch-mini-top li.is-me { font-weight: 700; }
+.ch-mini-top b { color: var(--wv-navy, #11308A); }
+.ch-mini-rank { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--wv-gold-soft, #FEF6DF); border: 1px solid var(--wv-gold-mid, #E3B534); font-size: 13px; font-weight: 700; color: var(--wv-navy-deep, #0A1E57); }
+.ch-mini-empty { display: block; font-size: 15px; color: var(--fg-2, #4A5468); }
+
+.ch-live-winner {
+  margin: 0 0 12px; padding: 12px 14px; border-radius: var(--r-md, 10px);
+  background: var(--wv-navy, #11308A); color: #fff; display: grid; gap: 2px;
+}
+.ch-live-winner span { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--wv-gold, #FBDB73); }
+.ch-live-winner b { font-family: var(--font-display, 'Archivo', sans-serif); font-size: 22px; }
+.ch-mini-winner { margin: 4px 0 6px; font-size: 15px; color: var(--fg-1, #1B2333); }
+.ch-mini-winner b { color: var(--wv-navy, #11308A); }

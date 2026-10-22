@@ -159,12 +159,12 @@ At **11:28 AM Eastern on Oct 22**, test cards and test drawings drop off the boa
 1. **Turn in a card on a phone:**
    1. Open the app with `?challenge-preview` at the end of the address and go to **Challenge** (Home card or the Agenda session).
    2. Enter a name.
-   3. Complete one square, e.g. **Visit WVABLE** with code word **ABLE**.
+   3. Complete one square, e.g. **Visit WV Relay** with code word **RELAY**.
    4. Tap **Turn in my card**.
 
    Within about 15 seconds you appear on `/leaderboard?staff` (after you enter the staff key). The phone panel and plain `/leaderboard` stay locked until 11:28 AM Thursday unless `LEADERBOARD_OPEN` is set. The button turns grey until your name is filled in **and** at least one square is complete; a hint explains this.
 
-   *Code words:* WVABLE = **ABLE**, Down Syndrome Network = **TOGETHER**. Every other required answer needs at least 2 characters, and the session dropdowns must be picked.
+   *Code words:* WV Relay = **RELAY** (replaced WVABLE on Oct 22), Down Syndrome Network = **TOGETHER**. Every other required answer needs at least 2 characters, and the session dropdowns must be picked.
 2. **Update a score:** complete another square, then tap **Update my card**, or **Update my score** in the leaderboard panel. The board updates.
 3. **Add a photo** to **Badge twin** or **Synergy Snapshot**. Then open `/photos`, enter the staff key, and the photo appears. Try **Download**, **Download all (.zip)** and **Delete**. Also tap the **camera** at the top left of the app, add a name, tick the photo release and share a photo: it shows on `/photos` as "Shared photo · Release agreed" (use the **Show** filter).
 4. **Try the drawing:**

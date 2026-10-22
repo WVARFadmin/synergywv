@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#11308A">
+<title>Challenge Photos — Staff</title>
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<style>
+  @font-face { font-family: 'Archivo'; font-weight: 700; font-display: swap; src: url('/fonts/archivo-latin-700-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Source Sans 3'; font-weight: 400; font-display: swap; src: url('/fonts/source-sans-3-latin-400-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Source Sans 3'; font-weight: 600; font-display: swap; src: url('/fonts/source-sans-3-latin-600-normal.woff2') format('woff2'); }
+  :root { --navy: #11308A; --navy-deep: #0A1E57; --navy-soft: #DEE5F5; --gold: #FBDB73; --gold-soft: #FEF6DF; --gold-mid: #E3B534;
+          --fg: #1B2333; --fg2: #4A5468; --line: #D9DEE8; --bg: #FBFAF7; --ok: #23612F; --ok-bg: #E2F1E4; --bad: #93360F; --bad-bg: #FBE3D6; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.45 'Source Sans 3', system-ui, sans-serif; }
+  header { background: var(--navy); color: #fff; border-bottom: 4px solid var(--gold); padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+  header img { height: 36px; }
+  header h1 { margin: 0; font: 700 20px/1.2 'Archivo', sans-serif; }
+  main { max-width: 1200px; margin: 0 auto; padding: 16px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  label { font-weight: 600; display: block; margin-bottom: 6px; }
+  input[type=password] { width: 100%; max-width: 320px; min-height: 44px; padding: 8px 12px; font: inherit; border: 1px solid var(--fg2); border-radius: 10px; }
+  button, .btn { min-height: 44px; padding: 8px 16px; font: 600 16px 'Source Sans 3', sans-serif; border-radius: 10px; border: 1px solid var(--navy); background: #fff; color: var(--navy); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+  button.primary { background: var(--gold); border-color: var(--gold-mid); color: var(--navy-deep); }
+  button:disabled { opacity: .6; cursor: default; }
+  :focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .toolbar { margin: 16px 0; justify-content: space-between; }
+  .msg { margin: 10px 0 0; color: var(--fg2); }
+  .msg.bad { color: var(--bad); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; list-style: none; margin: 0; padding: 0; }
+  .ph { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+  .ph .img { aspect-ratio: 4 / 3; background: var(--navy-soft); display: grid; place-items: center; color: var(--fg2); }
+  .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ph .body { padding: 10px 12px 12px; display: grid; gap: 4px; flex: 1; }
+  .ph b { font-size: 16px; }
+  .ph .meta { font-size: 14px; color: var(--fg2); }
+  .tag { justify-self: start; font-size: 13px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .tag.ok { background: var(--ok-bg); color: var(--ok); }
+  .tag.no { background: var(--bad-bg); color: var(--bad); }
+  .tag.kind { background: var(--navy-soft); color: var(--navy); }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .ph .btn { min-height: 40px; font-size: 15px; }
+  .ph .actions { margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .ph button.del { border-color: var(--bad); color: var(--bad); }
+  .ph button.del:hover { background: var(--bad-bg); }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<header>
+  <img src="/assets/wvarf-mark-reverse.png" alt="">
+  <h1>Synergy Connections Challenge · Photos (staff)</h1>
+</header>
+<main>
+  <form id="login" class="card" hidden>
+    <label for="key">Staff key</label>
+    <div class="row">
+      <input id="key" type="password" autocomplete="current-password" required>
+      <button class="primary" type="submit">Show photos</button>
+    </div>
+    <p class="msg" id="loginMsg">Ask the app admin for the staff key. It’s set in Netlify as STAFF_KEY.</p>
+  </form>
+
+  <section id="gallery" hidden>
+    <div class="row toolbar">
+      <div class="row" role="group" aria-label="Filter">
+        <label for="kind" style="margin:0">Show</label>
+        <select id="kind" style="min-height:44px;padding:6px 10px;font:inherit;border:1px solid var(--fg2);border-radius:10px">
+          <option value="">All photos</option>
+          <option value="conference">Shared photos (with release)</option>
+          <option value="challenge">Challenge photos</option>
+        </select>
+        <label class="row" style="margin:0;font-weight:400"><input type="checkbox" id="shareOnly"> Only photos OK to share</label>
+      </div>
+      <div class="row">
+        <button type="button" id="refresh">Refresh</button>
+        <button type="button" class="primary" id="zip">Download all (.zip)</button>
+        <button type="button" id="logout">Sign out</button>
+      </div>
+    </div>
+    <p class="msg" id="status" aria-live="polite"></p>
+    <ul class="grid" id="grid"></ul>
+  </section>
+</main>
+
+<script src="/live/jszip.min.js" defer></script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const KEY = 'wvarf-synergy:staff-key';
+  let key = '';
+  try { key = sessionStorage.getItem(KEY) || ''; } catch {}
+  let photos = [];
+  const urls = new Map(); // id -> object URL
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fileName = p => `${p.square || 'photo'}-${p.name || 'player'}-${p.id}`.replace(/[^\w.-]+/g, '_').slice(0, 90) + (/(png)/.test(p.type || '') ? '.png' : '.jpg');
+
+  function showLogin(msg, bad) {
+    $('gallery').hidden = true; $('login').hidden = false;
+    if (msg) { $('loginMsg').textContent = msg; $('loginMsg').className = 'msg' + (bad ? ' bad' : ''); }
+    $('key').focus();
+  }
+
+  async function api(path, method = 'GET') {
+    const res = await fetch(path, { method, headers: { 'x-staff-key': key }, cache: 'no-store' });
+    if (res.status === 401 || res.status === 503) {
+      const j = await res.json().catch(() => ({}));
+      const e = new Error(j.error || 'Not allowed'); e.auth = true; throw e;
+    }
+    if (!res.ok) throw new Error('Error ' + res.status);
+    return res;
+  }
+
+  async function imageUrl(p) {
+    if (urls.has(p.id)) return urls.get(p.id);
+    const blob = await (await api('/api/photo/' + encodeURIComponent(p.id))).blob();
+    const u = URL.createObjectURL(blob); urls.set(p.id, u); return u;
+  }
+
+  // Filters: photo type, and only ones OK to share (Challenge photos ticked
+  // "WVARF may share", or shared photos with the release agreed).
+  function shown() {
+    const k = $('kind').value;
+    return photos.filter(p => (!k || (p.kind || 'challenge') === k) && (!$('shareOnly').checked || p.share));
+  }
+
+  function render() {
+    const list = shown();
+    $('status').textContent = `${list.length} photo${list.length === 1 ? '' : 's'}` + (photos.some(p => p.error) ? ' · some could not be copied (see cards)' : '');
+    $('grid').innerHTML = list.map(p => `
+      <li class="ph" data-id="${esc(p.id)}">
+        <div class="img">${p.error ? esc(p.error) : 'Loading…'}</div>
+        <div class="body">
+          <b>${esc(p.square || 'Photo')}</b>
+          <span class="meta">${esc(p.name || 'Unknown')}${p.email ? ' · ' + esc(p.email) : ''}</span>
+          ${p.caption ? `<span class="meta">“${esc(p.caption)}”</span>` : ''}
+          <span class="meta">${p.at ? new Date(p.at).toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) : ''}</span>
+          <span class="tags">
+            <span class="tag kind">${p.kind === 'conference' ? 'Shared photo' : 'Challenge'}</span>
+            <span class="tag ${p.share ? 'ok' : 'no'}">${p.kind === 'conference' ? (p.release ? 'Release agreed' : 'No release') : (p.share ? 'OK to share' : 'Do not share')}</span>
+          </span>
+          <div class="actions">
+            ${p.error ? '' : `<a class="btn" href="#" data-dl="${esc(p.id)}">Download<span class="sr-only"> ${esc(p.square)} photo from ${esc(p.name)}</span></a>`}
+            <button type="button" class="del" data-del="${esc(p.id)}">Delete<span class="sr-only"> ${esc(p.square || 'photo')} from ${esc(p.name || 'unknown')}</span></button>
+          </div>
+        </div>
+      </li>`).join('');
+    for (const p of list) {
+      if (p.error) continue;
+      imageUrl(p).then(u => {
+        const box = document.querySelector(`[data-id="${CSS.escape(p.id)}"] .img`);
+        if (box) box.innerHTML = `<img src="${u}" alt="${esc(p.square)} photo from ${esc(p.name)}">`;
+      }).catch(() => {
+        const box = document.querySelector(`[data-id="${CSS.escape(p.id)}"] .img`);
+        if (box) box.textContent = 'Could not load';
+      });
+    }
+  }
+
+  async function load() {
+    $('status').textContent = 'Loading…';
+    try {
+      photos = (await (await api('/api/photos')).json()).photos || [];
+      $('login').hidden = true; $('gallery').hidden = false;
+      render();
+    } catch (e) {
+      if (e.auth) { try { sessionStorage.removeItem(KEY); } catch {} showLogin(e.message, true); }
+      else $('status').textContent = 'Could not load photos. ' + e.message;
+    }
+  }
+
+  $('login').addEventListener('submit', e => {
+    e.preventDefault();
+    key = $('key').value.trim();
+    try { sessionStorage.setItem(KEY, key); } catch {}
+    load();
+  });
+  $('logout').addEventListener('click', () => { key = ''; try { sessionStorage.removeItem(KEY); } catch {} showLogin('Signed out.'); });
+  $('refresh').addEventListener('click', load);
+  $('shareOnly').addEventListener('change', render);
+  $('kind').addEventListener('change', render);
+
+  // Delete removes the photo from this gallery for good. (A copy may still
+  // sit in Netlify → Forms → challenge-photo; delete it there too if needed.)
+  document.addEventListener('click', async e => {
+    const d = e.target.closest('[data-del]');
+    if (!d) return;
+    const p = photos.find(x => x.id === d.dataset.del);
+    if (!p || !confirm(`Delete this ${p.square || 'photo'} from ${p.name || 'unknown'}? This can't be undone.`)) return;
+    d.disabled = true;
+    try {
+      await api('/api/photo/' + encodeURIComponent(p.id), 'DELETE');
+      photos = photos.filter(x => x.id !== p.id);
+      if (urls.has(p.id)) { URL.revokeObjectURL(urls.get(p.id)); urls.delete(p.id); }
+      render();
+      $('status').textContent += ' · Photo deleted.';
+    } catch (err) {
+      d.disabled = false;
+      $('status').textContent = 'Could not delete: ' + err.message;
+    }
+  });
+
+  document.addEventListener('click', async e => {
+    const a = e.target.closest('[data-dl]');
+    if (!a) return;
+    e.preventDefault();
+    const p = photos.find(x => x.id === a.dataset.dl);
+    const link = document.createElement('a');
+    link.href = await imageUrl(p); link.download = fileName(p); link.click();
+  });
+
+  $('zip').addEventListener('click', async () => {
+    if (!window.JSZip) { $('status').textContent = 'Zip tool still loading — try again in a moment.'; return; }
+    const list = shown().filter(p => !p.error);
+    const btn = $('zip'); btn.disabled = true;
+    try {
+      const zip = new JSZip();
+      let n = 0;
+      for (const p of list) {
+        $('status').textContent = `Preparing ${++n} of ${list.length}…`;
+        const blob = await (await fetch(await imageUrl(p))).blob();
+        zip.file(fileName(p), blob);
+      }
+      const out = await zip.generateAsync({ type: 'blob' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(out);
+      link.download = `synergy-${$('kind').value || 'all'}-photos${$('shareOnly').checked ? '-shareable' : ''}.zip`;
+      link.click();
+      $('status').textContent = `Downloaded ${list.length} photo${list.length === 1 ? '' : 's'}.`;
+    } catch (e) {
+      $('status').textContent = 'Zip failed: ' + e.message;
+    } finally { btn.disabled = false; }
+  });
+
+  if (key) load(); else showLogin();
+})();
+</script>
+</body>
+</html>
