@@ -16,10 +16,10 @@ const ROOM_NOTES = {
   'Summersville Room': 'Overlooks the lake and Terrace Lawn',
   'Maple Room': 'Interior room',
   'Pecan Room': 'Interior room',
-  'Gauley Room': 'Track A breakouts',
+  'Gauley Room': 'Shared Office',
   'Kanawha Room': 'Overlooks the lake and Terrace Lawn',
   'Greenbrier Room': 'Overlooks the lake and Terrace Lawn',
-  'Potomac Room': 'Shared Office',
+  'Potomac Room': 'Thursday Track A breakout',
 };
 
 // Which floor-plan rooms this year's programme uses, and for what. Built from

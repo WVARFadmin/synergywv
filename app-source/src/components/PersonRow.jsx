@@ -66,14 +66,14 @@ export function PersonRow({ person, expanded = false, onToggle, savedIds, onTogg
         aria-label={`${summary} — contact details`}
         onClick={() => onToggle(person.id)}
       >
-        {/* Speakers get a larger, ringed avatar so they stand out in the list. */}
+        {/* Every card is the same size (the speaker size); speakers keep the gold ring. */}
         {/* A personal donor with no photo shows their sponsor icon. */}
         {person.sponsor && !person.photo && org?.logo ? (
           <span className="org-avatar" aria-hidden="true">
             <OrgLogo org={org} className="org-avatar-logo" fallback={<span className="org-avatar-initial">{person.initials}</span>} />
           </span>
         ) : (
-          <Avatar person={person} size={person.speaker ? 'md' : 'sm'} ring={person.speaker} />
+          <Avatar person={person} size="md" ring={person.speaker} />
         )}
         <span className="who">
           <span className="name">{person.name}</span>

@@ -253,6 +253,7 @@ export default function App() {
         onNavigate={t => { changeTab(t); window.scrollTo(0, 0); }}
         onOpenSession={openSession}
         onToggleStar={toggleStar}
+        now={now}
         feedbackOpen={conferenceSurveyOpen(now) || SESSIONS.some(s => hasSessionSurvey(s) && sessionSurveyOpen(s, now))}
       />
     );

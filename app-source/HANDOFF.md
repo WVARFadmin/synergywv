@@ -540,3 +540,14 @@ Nita's friend Mike (with Claude) built a live leaderboard, a projector page with
 - **Challenge lock:** `src/data/challengeGate.js`. Before 11:28 AM Thu (2 min before `CHALLENGE.opens`) the Challenge screen and Home card show only time/place; the in-app leaderboard panel (`public/live/leaderboard.js`) stays out. `?challenge-preview` (remembered in localStorage; `=off` clears it) and `?challenge-staff` bypass it. `/api/leaderboard` returns `{locked:true}` before `BOARD_REVEAL` unless the `x-staff-key` header is valid or `LEADERBOARD_OPEN` is set; `/leaderboard?staff` sends the key. `DEFAULT_SINCE` moved to 11:28 AM Oct 22 so staff test cards made that morning don't count.
 - dev-server.mjs now passes the request to the leaderboard function.
 
+- **Room check (Oct 18, later):** Nita confirmed the Potomac Room stays the Shared Office and the janitorial training room; Gauley stays Track A. Every room mention (agenda, notifications, Info, Home, Venue, map notes, session descriptions) was checked against SESSIONS and matches. "Up next" notifications now read naturally ("in the Pecan Room", "on the Terrace Lawn", "in Ballroom II"). The w1 session page says: check in at the registration desk in the Lobby, breakfast in the Terrace Foyer (the Lobby registration desk is from the Oct 8 schedule sheet).
+
+## 27. Oct 21: Thursday room swap, legislative committee question, new Alyce link
+
+- **Room swap (Nita, Oct 21):** Thursday's Gauley and Potomac events swapped. The Gauley Room is now the Shared Office and holds the remote janitorial training (rj1). Cash Is King (t3a, Thursday Track A) is in the Potomac Room. Wednesday's Track A sessions stay listed in Gauley, since that's where they ran. Updated: SESSIONS, SHARED_OFFICE (room, summary, "next to the Kanawha Room"), ROOMS, FloorPlan notes, the Home office card, the rj1 description and the shared-office notification. New notification `room-swap-2026-10-21` ("Room change for Thursday") from Oct 21 4:30 PM to Thu 12:30 PM.
+- **Conference survey:** new section "State Use Legislative Committee": `leg_committee` (Yes / No / Not me, but I'd like to nominate someone at my organization), then `leg_email` if Yes, or `leg_nominee_name` + `leg_nominee_email` if nominating. SurveyForm.jsx now supports `showIf: { id, equals }`; hidden follow-ups aren't sent. The columns appear in Netlify Forms → conference-feedback.
+- **Materials:** w4c Alyce Almond's link replaced with the new version (…ded6f3d4-8bb9-485f-8ce0-156caa37a90e).
+
+## 28. Oct 22: WV Relay replaces WVABLE in the Challenge
+
+- WVABLE couldn't exhibit; WV Relay took its table. The first Challenge square is now "Visit WV Relay" (id `wvrelay`, Phone icon, code word **RELAY**). The Home card blurb, the 11:30 notification and NITA-HANDOFF were updated. WVABLE stays a Bronze sponsor and Roxanne Clay stays a speaker.

@@ -20,7 +20,7 @@ export function ChallengeLiveBanner({ now, onOpen, onDismiss }) {
         <span className="ch-live-text">
           <span className="ch-live-kicker">{last ? 'Last call' : 'Happening now'}</span>
           <span className="ch-live-title">{last ? 'Turn in your Challenge card by 12:40' : 'The Synergy Connections Challenge is on!'}</span>
-          <span className="ch-live-sub">{last ? 'Every square is a ticket for the gift basket.' : 'Pecan Room & Terrace Level · until 12:30 PM'}</span>
+          <span className="ch-live-sub">{last ? 'Every square is a ticket for the gift basket.' : 'Terrace Foyer · until 12:30 PM'}</span>
         </span>
         <span className="ch-live-go">Open my card <ArrowRight aria-hidden="true" /></span>
       </button>
