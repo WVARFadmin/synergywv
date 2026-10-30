@@ -36,7 +36,7 @@ npx netlify-cli deploy --prod --dir=dist
   attendees on their next visit instead of being held by the service worker.
 - Baseline security headers.
 
----
+-----
 
 ## Local development
 
