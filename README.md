@@ -6,7 +6,7 @@ WVARF's 2nd Annual State Use Conference at Stonewall Resort, October 20–22, 20
 It is a React + Vite single-page app that installs as a PWA, works offline, and
 is built to deploy to Netlify as a static site.
 
----test1
+---
 
 ## Deploy to Netlify
 
