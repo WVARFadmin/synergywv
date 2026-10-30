@@ -26,7 +26,7 @@ export const MATERIALS = [
     'https://acrobat.adobe.com/id/urn:aaid:sc:VA6C2:2b46cf54-afe7-4d06-bad6-3023b05dfee5',
     'Presentation', 'PDF · opens in Adobe Acrobat'),
   link('w4c', 'Presentation: Alyce Almond',
-    'https://acrobat.adobe.com/id/urn:aaid:sc:VA6C2:ded6f3d4-8bb9-485f-8ce0-156caa37a90e',
+    'https://acrobat.adobe.com/id/urn:aaid:sc:VA6C2:d9682534-78f5-4696-9694-dad251525330',
     'Presentation', 'PDF · opens in Adobe Acrobat'),
   link('w8a', 'Presentation: Mark Fox',
     'https://acrobat.adobe.com/id/urn:aaid:sc:VA6C2:ffd46645-57a6-4e05-a5d5-995dd1e4ef92',
@@ -35,7 +35,7 @@ export const MATERIALS = [
     'https://acrobat.adobe.com/id/urn:aaid:sc:VA6C2:4a08b746-d3de-4aec-99a7-2862af25b79a',
     'Presentation', 'PDF · opens in Adobe Acrobat'),
   link('t6t', 'Presentation: Michael Yon',
-    'https://acrobat.adobe.com/id/urn:aaid:sc:VA6C2:d395fa3c-fde6-47c5-a15c-583c3c49849a',
+    'https://acrobat.adobe.com/id/urn:aaid:sc:VA6C2:8d1c5808-5859-4b48-8b9e-85d61c8077bb',
     'Presentation', 'PDF · opens in Adobe Acrobat'),
   // Added from the checklist's "correct version" (Oct 15). Every link above and
   // below matches the presenter row it sits on in that sheet.
@@ -57,6 +57,10 @@ export const MATERIALS = [
     'Resource', 'PDF · opens in Adobe Acrobat'),
   // Added Oct 18 from the checklist (rows for Misty Mayville, Aimee White,
   // Morgan Robinson, Tina Cobb and Andrea Higginbotham).
+  // Oct 27 checklist: Adam Mouse's presentation.
+  link('t6c', 'Presentation: Adam Mouse',
+    'https://acrobat.adobe.com/id/urn:aaid:sc:VA6C2:86cccdb9-0bd3-479d-a039-1515672201da',
+    'Presentation', 'PDF · opens in Adobe Acrobat'),
   link('t6c', 'Apprenticeship Visual: Misty Mayville',
     'https://acrobat.adobe.com/id/urn:aaid:sc:va6c2:5e7f9e44-ac29-4fad-8edf-817baba43f7f',
     'Resource', 'PDF · opens in Adobe Acrobat'),
@@ -72,6 +76,10 @@ export const MATERIALS = [
   link('w8b', 'Strategy to Story Worksheet: Morgan Robinson',
     'https://acrobat.adobe.com/id/urn:aaid:sc:VA6C2:36e8350a-7ba8-4fe8-ba65-0f9d111af761',
     'Worksheet', 'PDF · opens in Adobe Acrobat'),
+  // Oct 30 checklist: one shared link for the WVABLE / Benefits Counseling session.
+  link('w8c', 'Presentation: Audra Spenia & Roxanne Clay',
+    'https://acrobat.adobe.com/id/urn:aaid:sc:VA6C2:05b14dc3-1cbe-4ffa-bfeb-33a76799438d',
+    'Presentation', 'PDF · opens in Adobe Acrobat'),
   link('t2', 'Presentation: Tina Cobb',
     'https://acrobat.adobe.com/id/urn:aaid:sc:VA6C2:b732025b-4321-4b46-ad55-8e0bba6f540b',
     'Presentation', 'PDF · opens in Adobe Acrobat'),

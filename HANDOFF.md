@@ -551,3 +551,11 @@ Nita's friend Mike (with Claude) built a live leaderboard, a projector page with
 ## 28. Oct 22: WV Relay replaces WVABLE in the Challenge
 
 - WVABLE couldn't exhibit; WV Relay took its table. The first Challenge square is now "Visit WV Relay" (id `wvrelay`, Phone icon, code word **RELAY**). The Home card blurb, the 11:30 notification and NITA-HANDOFF were updated. WVABLE stays a Bronze sponsor and Roxanne Clay stays a speaker.
+
+## 29. Oct 27: materials from the 10/27/26 checklist
+
+- `WVARF_2026_Presenter_Submission_102726.xlsx` has 7 links. Updated: w4c Alyce Almond (…d9682534…, replacing the Oct 21 link), t6t Michael Yon (…8d1c5808…). Added: t6c Adam Mouse presentation (…86cccdb9…), listed before Misty's two t6c resources. David Mitchell, Mark Fox and Michael Yon (w8a) were unchanged. The sheet has no links for the other presenters who already have materials in the app (Travis Kline, Morgan Hassig, Zach Sandy, Misty Mayville, Aimee White, Morgan Robinson, Tina Cobb, Andrea Higginbotham), so their links were kept.
+
+## 30. Oct 30: WVABLE session materials
+
+- w8c (Empowering Employment: Benefits Counseling and WVABLE, Audra Spenia & Roxanne Clay) now has one shared presentation link (…05b14dc3-1cbe-4ffa-bfeb-33a76799438d) from Nita's Oct 30 checklist. The same link was added to rows 19–20 of the combined checklist made on Oct 27.
